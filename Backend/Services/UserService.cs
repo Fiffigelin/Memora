@@ -3,18 +3,29 @@ using Backend.Entities;
 using Backend.Repositories;
 using Backend.Validations;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace Backend.Services;
 
-public class UserService
+public interface IUserService
+{
+  Task<AuthResponseDto?> LoginAsync(LoginRequestDto loginDto);
+}
+
+public class UserService : IUserService
 {
   private readonly IUserRepository _userRepo;
   private readonly PasswordHasher<User> _hasher;
+  private readonly IConfiguration _configuration;
 
-  public UserService(IUserRepository userRepo)
+  public UserService(IUserRepository userRepo, IConfiguration configuration)
   {
     _userRepo = userRepo;
     _hasher = new PasswordHasher<User>();
+    _configuration = configuration;
   }
 
   public async Task<bool> Register(RegisterUserDto dto)
@@ -43,6 +54,53 @@ public class UserService
     }
   }
 
+  public async Task<AuthResponseDto?> LoginAsync(LoginRequestDto loginDto)
+  {
+    var user = await _userRepo.GetByEmailAsync(loginDto.Email);
+
+    if (user == null || !VerifyPassword(loginDto.Password, user.PasswordHash))
+      return null;
+
+    var token = GenerateJwtToken(user);
+
+    return new AuthResponseDto
+    {
+      Token = token,
+      User = new UserProfileDto
+      {
+        Id = user.Id,
+        Username = user.Username,
+        Email = user.Email,
+        VocabularyLists = user.VocabularyLists
+                .Select(vl => new VocabularyListSummaryDto
+                {
+                  Id = vl.Id,
+                  Title = vl.Title,
+                  VocabularyCount = vl.Vocabularies.Count
+                }).ToList()
+      }
+    };
+  }
+
+  public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+  {
+    var users = await _userRepo.GetAllUsersAsync();
+
+    return users.Select(u => new UserDto
+    {
+      Id = u.Id,
+      Username = u.Username,
+      PasswordHash = u.PasswordHash.
+      Email = u.Email,
+      VocabularyLists = u.VocabularyLists.Select(vl => new VocabularyListSummaryDto
+      {
+        Id = vl.Id,
+        Title = vl.Title,
+        VocabularyCount = vl.Vocabularies.Count
+      }).ToList()
+    });
+  }
+
   public async Task<UserProfileDto> GetUserProfileAsync(Guid userId)
   {
     var user = await _userRepo.GetByIdAsync(userId);
@@ -62,7 +120,7 @@ public class UserService
     };
   }
 
-  public async Task<IEnumerable<UserProfileDto>> GetAllUsersAsync()
+  public async Task<IEnumerable<UserProfileDto>> GetAllUserProfilesAsync()
   {
     var users = await _userRepo.GetAllUsersAsync();
 

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Services;
-using Backend.Models.Auth;
+using Backend.DTOs;
+using Backend.Entities;
 
 namespace Backend.Controllers;
 
@@ -24,6 +25,17 @@ public class UserController(UserService userService) : ControllerBase
     }
   }
 
+  [HttpPost("login")]
+  public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
+  {
+    var authResponse = await _userService.LoginAsync(loginDto);
+
+    if (authResponse == null)
+      return Unauthorized("Invalid email or password.");
+
+    return Ok(authResponse);
+  }
+
   [HttpGet("{userId:guid}")]
   public async Task<ActionResult<UserProfileDto>> GetUserProfile(Guid userId)
   {
@@ -38,11 +50,18 @@ public class UserController(UserService userService) : ControllerBase
     }
   }
 
-  [HttpGet("{UserProfiles}")]
+  [HttpGet]
   public async Task<ActionResult<IEnumerable<UserProfileDto>>> GetAllUserProfiles()
   {
     var profiles = await _userService.GetAllUserProfilesAsync();
     return Ok(profiles);
+  }
+
+  [HttpGet]
+  public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+  {
+    var users = await _userService.GetAllUsersAsync();
+    return Ok(users);
   }
 
   [HttpDelete("{userId:guid}")]
