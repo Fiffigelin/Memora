@@ -50,15 +50,15 @@ public class UserController(UserService userService) : ControllerBase
     }
   }
 
-  [HttpGet]
+  [HttpGet("profiles")]
   public async Task<ActionResult<IEnumerable<UserProfileDto>>> GetAllUserProfiles()
   {
     var profiles = await _userService.GetAllUserProfilesAsync();
     return Ok(profiles);
   }
 
-  [HttpGet]
-  public async Task<ActionResult<IEnumerable<User>>> GetAllUsers()
+  [HttpGet("all")]
+  public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
   {
     var users = await _userService.GetAllUsersAsync();
     return Ok(users);

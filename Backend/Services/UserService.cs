@@ -90,7 +90,7 @@ public class UserService : IUserService
     {
       Id = u.Id,
       Username = u.Username,
-      PasswordHash = u.PasswordHash.
+      PasswordHash = u.PasswordHash,
       Email = u.Email,
       VocabularyLists = u.VocabularyLists.Select(vl => new VocabularyListSummaryDto
       {
@@ -174,6 +174,36 @@ public class UserService : IUserService
     if (await _userRepo.ExistsByEmailAsync(dto.Email))
       throw new ArgumentException("Email already exists");
   }
+
+      private string GenerateJwtToken(User user)
+    {
+        var jwtSettings = _configuration.GetSection("Jwt");
+
+        var claims = new[]
+        {
+            new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.Username),
+            new Claim(JwtRegisteredClaimNames.Email, user.Email)
+        };
+
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Key"]!));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var token = new JwtSecurityToken(
+            issuer: jwtSettings["Issuer"],
+            audience: jwtSettings["Audience"],
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(2),
+            signingCredentials: creds
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private bool VerifyPassword(string password, string storedHash)
+    {
+        return BCrypt.Net.BCrypt.Verify(password, storedHash);
+    }
 
   // public bool Login(LoginUserDto dto)
   // {
