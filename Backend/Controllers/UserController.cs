@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Services;
 using Backend.DTOs;
-using Backend.Entities;
 
 namespace Backend.Controllers;
 
@@ -10,31 +9,6 @@ namespace Backend.Controllers;
 public class UserController(UserService userService) : ControllerBase
 {
   private readonly UserService _userService = userService;
-
-  [HttpPost("register")]
-  public async Task<ActionResult<bool>> Register([FromBody] RegisterUserDto dto)
-  {
-    try
-    {
-      return await _userService.Register(dto);
-
-    }
-    catch (ArgumentException ex)
-    {
-      return BadRequest(new { message = ex.Message });
-    }
-  }
-
-  [HttpPost("login")]
-  public async Task<IActionResult> Login([FromBody] LoginRequestDto loginDto)
-  {
-    var authResponse = await _userService.LoginAsync(loginDto);
-
-    if (authResponse == null)
-      return Unauthorized("Invalid email or password.");
-
-    return Ok(authResponse);
-  }
 
   [HttpGet("{userId:guid}")]
   public async Task<ActionResult<UserProfileDto>> GetUserProfile(Guid userId)

@@ -15,7 +15,7 @@ public class User
   public string Username { get; private set; } = null!;
   public string PasswordHash { get; private set; } = null!;
   public string Email { get; private set; } = null!;
-  public ICollection<VocabularyList> VocabularyLists { get; set; } = new List<VocabularyList>();
+  public ICollection<VocabularyList> VocabularyLists { get; set; } = [];
 
   private void SetUserName(string username)
     {

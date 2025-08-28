@@ -7,5 +7,5 @@ public class Vocabulary
 
     // fk till listan
     public Guid VocabularyListId { get; set; }
-    public VocabularyList VocabularyList { get; set; }
+    public VocabularyList? VocabularyList { get; set; }
 }

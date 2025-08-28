@@ -30,24 +30,22 @@ public class UserRepository : IUserRepository
     return await _context.Users.AnyAsync(u => u.Email == email);
   }
 
-  public async Task<User> GetByIdAsync(Guid userId)
+  public async Task<User?> GetByIdAsync(Guid userId)
   {
     var user = await _context.Users
         .Include(u => u.VocabularyLists)
             .ThenInclude(vl => vl.Vocabularies)
-        .FirstOrDefaultAsync(u => u.Id == userId) ?? throw new KeyNotFoundException($"User with ID {userId} not found.");
+        .FirstOrDefaultAsync(u => u.Id == userId);
 
     return user;
   }
 
-  public async Task<User> GetByEmailAsync(string email)
+  public async Task<User?> GetByEmailAsync(string email)
   {
-    var user = await _context.Users
+    return await _context.Users
         .Include(u => u.VocabularyLists)
             .ThenInclude(vl => vl.Vocabularies)
-        .FirstOrDefaultAsync(u => u.Email == email) ?? throw new KeyNotFoundException($"User with Email {email} not found.");
-
-    return user;
+        .FirstOrDefaultAsync(u => u.Email == email);
   }
   public async Task<IEnumerable<User>> GetAllUsersAsync()
   {

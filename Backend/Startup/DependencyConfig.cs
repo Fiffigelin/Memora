@@ -1,6 +1,9 @@
 using Backend.Data;
+using Backend.Entities;
 using Backend.Repositories;
 using Backend.Services;
+using Backend.Services.Auth;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Backend.Startup;
@@ -17,8 +20,14 @@ public static class DependenciesConfig
 
         // Repos
         builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<ITokenService, TokenService>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 
         // Services
         builder.Services.AddScoped<UserService>();
+        builder.Services.AddScoped<AuthService>();
+        builder.Services.AddScoped<TokenService>();
+
     }
 }
