@@ -1,3 +1,5 @@
+using Backend.DTOs.User;
+
 namespace Backend.DTOs.Auth;
 
 public class AuthResponseDto

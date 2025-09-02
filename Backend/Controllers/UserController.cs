@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Services;
-using Backend.DTOs;
+using Backend.DTOs.User;
 
 namespace Backend.Controllers;
 
@@ -16,6 +16,11 @@ public class UserController(UserService userService) : ControllerBase
     try
     {
       var profile = await _userService.GetUserProfileAsync(userId);
+      if (profile == null)
+      { 
+        return NotFound(new { message = "User not found" });
+      }
+
       return Ok(profile);
     }
     catch (InvalidOperationException ex)

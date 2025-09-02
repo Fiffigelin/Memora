@@ -1,20 +1,25 @@
-using Backend.DTOs;
+using Backend.DTOs.User;
+using Backend.DTOs.Vocabulary;
 using Backend.Repositories;
+using Backend.Repositories.Vocabularies;
 
 namespace Backend.Services;
 
 public class UserService
 {
   private readonly IUserRepository _userRepo;
+  private readonly IVocabularyListRepository _vocabListRepo;
 
-  public UserService(IUserRepository userRepo)
+  public UserService(IUserRepository userRepo, IVocabularyListRepository vocabListRepo)
   {
     _userRepo = userRepo;
+    _vocabListRepo = vocabListRepo;
   }
 
   public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
   {
     var users = await _userRepo.GetAllUsersAsync();
+    var lists = await _vocabListRepo.GetAllLists();
 
     return users.Select(u => new UserDto
     {
@@ -22,32 +27,40 @@ public class UserService
       Username = u.Username,
       PasswordHash = u.PasswordHash,
       Email = u.Email,
-      VocabularyLists = [.. u.VocabularyLists.Select(vl => new VocabularyListSummaryDto
-      {
-        Id = vl.Id,
-        Title = vl.Title,
-        VocabularyCount = vl.Vocabularies.Count
-      })]
+      VocabularyLists = [.. lists
+            .Where(vl => vl.UserId == u.Id)
+            .Select(vl => new VocabularyListSummaryDto
+            {
+                Id = vl.Id,
+                Title = vl.Title,
+                VocabularyCount = vl.Vocabularies.Count
+            })]
     });
   }
 
-  public async Task<UserProfileDto?> GetUserProfileAsync(Guid userId)
+  public async Task<UserProfileDto> GetUserProfileAsync(Guid userId)
   {
-    var user = await _userRepo.GetByIdAsync(userId);
-    if (user == null)
-        return null;
+    var user = await _userRepo.GetByIdAsync(userId)
+        ?? throw new InvalidOperationException("User not found");
+    var lists = await _vocabListRepo.GetListsByUser(userId);
 
     return new UserProfileDto
     {
       Id = user.Id,
       Username = user.Username,
       Email = user.Email,
-      VocabularyLists = [.. user.VocabularyLists
-            .Select(vl => new VocabularyListSummaryDto
+      VocabularyLists = [.. lists.Select(vl => new VocabularyListDto
             {
               Id = vl.Id,
               Title = vl.Title,
-              VocabularyCount = vl.Vocabularies.Count
+              Language = vl.Language,
+              Vocabularies = [.. vl.Vocabularies
+                    .Select(v => new VocabularyDto
+                    {
+                      Id = v.Id,
+                      Word = v.Word,
+                      Translation = v.Translation
+                    })]
             })]
     };
   }
@@ -55,18 +68,26 @@ public class UserService
   public async Task<IEnumerable<UserProfileDto>> GetAllUserProfilesAsync()
   {
     var users = await _userRepo.GetAllUsersAsync();
+    var lists = await _vocabListRepo.GetAllLists();
 
     return [.. users.Select(u => new UserProfileDto
     {
       Id = u.Id,
       Username = u.Username,
       Email = u.Email,
-      VocabularyLists = [.. u.VocabularyLists
-            .Select(vl => new VocabularyListSummaryDto
+      VocabularyLists = [.. lists
+            .Select(vl => new VocabularyListDto
             {
               Id = vl.Id,
               Title = vl.Title,
-              VocabularyCount = vl.Vocabularies.Count
+              Language = vl.Language,
+              Vocabularies = [.. vl.Vocabularies
+                    .Select(v => new VocabularyDto
+                    {
+                      Id = v.Id,
+                      Word = v.Word,
+                      Translation = v.Translation
+                    })]
             })]
     })];
   }

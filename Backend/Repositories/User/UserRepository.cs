@@ -32,27 +32,16 @@ public class UserRepository : IUserRepository
 
   public async Task<User?> GetByIdAsync(Guid userId)
   {
-    var user = await _context.Users
-        .Include(u => u.VocabularyLists)
-            .ThenInclude(vl => vl.Vocabularies)
-        .FirstOrDefaultAsync(u => u.Id == userId);
-
-    return user;
+    return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
   }
 
   public async Task<User?> GetByEmailAsync(string email)
   {
-    return await _context.Users
-        .Include(u => u.VocabularyLists)
-            .ThenInclude(vl => vl.Vocabularies)
-        .FirstOrDefaultAsync(u => u.Email == email);
+    return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
   }
   public async Task<IEnumerable<User>> GetAllUsersAsync()
   {
-    return await _context.Users
-        .Include(u => u.VocabularyLists)
-            .ThenInclude(vl => vl.Vocabularies)
-        .ToListAsync();
+    return await _context.Users.ToListAsync();
   }
 
   public async Task<User> DeleteAsync(User user)
@@ -61,15 +50,4 @@ public class UserRepository : IUserRepository
     await _context.SaveChangesAsync();
     return user;
   }
-
-  // public User? GetByUsername(string username)
-  // {
-  //   return _context.Users.FirstOrDefault(u => u.Username == username);
-  // }
-
-  // public void Update(User user)
-  // {
-  //   _context.Users.Update(user);
-  //   _context.SaveChanges();
-  // }
 }

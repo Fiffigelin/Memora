@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(MemoraDbContext))]
-    [Migration("20250828065159_Initialmigration")]
-    partial class Initialmigration
+    [Migration("20250902134522_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,14 +49,10 @@ namespace Backend.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Vocabulary", b =>
+            modelBuilder.Entity("Backend.Entities.Vocabulary", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Language")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Translation")
@@ -86,6 +82,10 @@ namespace Backend.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -100,7 +100,7 @@ namespace Backend.Migrations
                     b.ToTable("VocabularyLists");
                 });
 
-            modelBuilder.Entity("Vocabulary", b =>
+            modelBuilder.Entity("Backend.Entities.Vocabulary", b =>
                 {
                     b.HasOne("VocabularyList", "VocabularyList")
                         .WithMany("Vocabularies")

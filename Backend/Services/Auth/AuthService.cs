@@ -1,9 +1,10 @@
 using Backend.DTOs.Auth;
-using Backend.DTOs;
 using Backend.Entities;
 using Backend.Repositories;
 using Backend.Validations;
 using Microsoft.AspNetCore.Identity;
+using Backend.DTOs.User;
+using Backend.DTOs.Vocabulary;
 
 namespace Backend.Services.Auth;
 
@@ -18,12 +19,14 @@ public class AuthService : IAuthService
   private readonly IUserRepository _userRepo;
   private readonly IPasswordHasher<User> _hasher;
   private readonly ITokenService _tokenService;
+  private readonly UserService _userService;
 
-  public AuthService(IUserRepository userRepo, IPasswordHasher<User> hasher, ITokenService tokenService)
+  public AuthService(IUserRepository userRepo, IPasswordHasher<User> hasher, ITokenService tokenService, UserService userService)
   {
     _userRepo = userRepo;
     _hasher = hasher;
     _tokenService = tokenService;
+    _userService = userService;
   }
 
   public async Task<AuthResponseDto?> LoginAsync(LoginRequestDto dto)
@@ -38,21 +41,12 @@ public class AuthService : IAuthService
 
     var token = _tokenService.GenerateToken(user);
 
+    var userProfile = await _userService.GetUserProfileAsync(user.Id);
+
     return new AuthResponseDto
     {
       Token = token,
-      User = new UserProfileDto
-      {
-        Id = user.Id,
-        Username = user.Username,
-        Email = user.Email,
-        VocabularyLists = [.. user.VocabularyLists
-                    .Select(vl => new VocabularyListSummaryDto
-                    {
-                        Id = vl.Id,
-                        Title = vl.Title
-                    })]
-      }
+      User = userProfile
     };
   }
 

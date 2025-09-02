@@ -1,6 +1,7 @@
 using Backend.Data;
 using Backend.Entities;
 using Backend.Repositories;
+using Backend.Repositories.Vocabularies;
 using Backend.Services;
 using Backend.Services.Auth;
 using Microsoft.AspNetCore.Identity;
@@ -20,6 +21,7 @@ public static class DependenciesConfig
 
         // Repos
         builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IVocabularyListRepository, VocabularyListRepository>();
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
@@ -28,6 +30,7 @@ public static class DependenciesConfig
         builder.Services.AddScoped<UserService>();
         builder.Services.AddScoped<AuthService>();
         builder.Services.AddScoped<TokenService>();
+        builder.Services.AddScoped<VocabularyListService>();
 
     }
 }

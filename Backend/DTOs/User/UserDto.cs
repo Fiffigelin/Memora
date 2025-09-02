@@ -1,4 +1,6 @@
-namespace Backend.DTOs;
+using Backend.DTOs.Vocabulary;
+
+namespace Backend.DTOs.User;
 
 public class UserDto
 {
