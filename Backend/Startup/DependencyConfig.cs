@@ -1,5 +1,5 @@
 using Backend.Data;
-using Backend.Entities;
+using Backend.Models.Entities;
 using Backend.Repositories;
 using Backend.Repositories.Vocabularies;
 using Backend.Services;

@@ -1,4 +1,4 @@
-using Backend.DTOs.Auth;
+using Backend.Models.DTOs.Auth;
 using Backend.Services.Auth;
 using Microsoft.AspNetCore.Mvc;
 

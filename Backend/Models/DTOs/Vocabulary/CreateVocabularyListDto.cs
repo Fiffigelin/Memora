@@ -1,4 +1,4 @@
-namespace Backend.DTOs.Vocabulary;
+namespace Backend.Models.DTOs.Vocabulary;
 
 public class CreateVocabularyListDto
 {

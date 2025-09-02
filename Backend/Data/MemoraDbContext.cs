@@ -1,4 +1,4 @@
-using Backend.Entities;
+using Backend.Models.Entities;
 using Backend.Startup;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;

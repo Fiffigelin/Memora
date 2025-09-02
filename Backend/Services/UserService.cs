@@ -1,5 +1,6 @@
-using Backend.DTOs.User;
-using Backend.DTOs.Vocabulary;
+using Backend.Models.DTOs.User;
+using Backend.Models.DTOs.Vocabulary;
+using Backend.Models.Wrappers;
 using Backend.Repositories;
 using Backend.Repositories.Vocabularies;
 
@@ -9,11 +10,13 @@ public class UserService
 {
   private readonly IUserRepository _userRepo;
   private readonly IVocabularyListRepository _vocabListRepo;
+  private readonly VocabularyListService _vocabListService;
 
-  public UserService(IUserRepository userRepo, IVocabularyListRepository vocabListRepo)
+  public UserService(IUserRepository userRepo, IVocabularyListRepository vocabListRepo, VocabularyListService vocabListService)
   {
     _userRepo = userRepo;
     _vocabListRepo = vocabListRepo;
+    _vocabListService = vocabListService;
   }
 
   public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
@@ -65,31 +68,46 @@ public class UserService
     };
   }
 
-  public async Task<IEnumerable<UserProfileDto>> GetAllUserProfilesAsync()
+  public async Task<ApiResponse<IEnumerable<UserProfileDto>>> GetAllUserProfilesAsync()
   {
-    var users = await _userRepo.GetAllUsersAsync();
-    var lists = await _vocabListRepo.GetAllLists();
-
-    return [.. users.Select(u => new UserProfileDto
+    try
     {
-      Id = u.Id,
-      Username = u.Username,
-      Email = u.Email,
-      VocabularyLists = [.. lists
-            .Select(vl => new VocabularyListDto
-            {
-              Id = vl.Id,
-              Title = vl.Title,
-              Language = vl.Language,
-              Vocabularies = [.. vl.Vocabularies
-                    .Select(v => new VocabularyDto
-                    {
-                      Id = v.Id,
-                      Word = v.Word,
-                      Translation = v.Translation
-                    })]
-            })]
-    })];
+      var users = await _userRepo.GetAllUsersAsync();
+
+      var tasks = users.Select(async user =>
+      {
+        var listsResponse = await _vocabListService.GetListsByUserAsync(user.Id);
+        var lists = listsResponse.Success && listsResponse.Data != null
+      ? listsResponse.Data
+      : [];
+
+        return new UserProfileDto
+        {
+          Id = user.Id,
+          Username = user.Username,
+          Email = user.Email,
+          VocabularyLists = [.. lists]
+        };
+      });
+
+      var userProfiles = await Task.WhenAll(tasks);
+
+      return new ApiResponse<IEnumerable<UserProfileDto>>
+      {
+        Success = true,
+        Message = "All users profiles retrieved successfully",
+        Data = userProfiles
+      };
+    }
+    catch (Exception ex)
+    {
+      return new ApiResponse<IEnumerable<UserProfileDto>>
+      {
+        Success = false,
+        Message = "Failed to users profiles: " + ex.Message,
+        Data = null
+      };
+    }
   }
 
 

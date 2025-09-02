@@ -1,4 +1,4 @@
-using Backend.Entities;
+namespace Backend.Models.Entities;
 
 public class VocabularyList
 {

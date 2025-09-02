@@ -1,17 +1,15 @@
-using Backend.DTOs.Auth;
-using Backend.Entities;
+using Backend.Models.DTOs.Auth;
+using Backend.Models.Entities;
 using Backend.Repositories;
 using Backend.Validations;
 using Microsoft.AspNetCore.Identity;
-using Backend.DTOs.User;
-using Backend.DTOs.Vocabulary;
 
 namespace Backend.Services.Auth;
 
 public interface IAuthService
 {
-    Task<AuthResponseDto?> LoginAsync(LoginRequestDto dto);
-    Task<AuthResultDto> RegisterAsync(RegisterUserDto dto);
+  Task<AuthResponseDto?> LoginAsync(LoginRequestDto dto);
+  Task<AuthResultDto> RegisterAsync(RegisterUserDto dto);
 }
 
 public class AuthService : IAuthService
@@ -78,21 +76,21 @@ public class AuthService : IAuthService
         Message = ex.Message
       };
     }
-        catch (Exception)
+    catch (Exception)
     {
-        if (user != null)
-        {
-            await _userRepo.DeleteAsync(user);
-        }
+      if (user != null)
+      {
+        await _userRepo.DeleteAsync(user);
+      }
 
-        return new AuthResultDto
-        {
-            Success = false,
-            Message = "An unexpected error occurred. Please try again later."
-        };
+      return new AuthResultDto
+      {
+        Success = false,
+        Message = "An unexpected error occurred. Please try again later."
+      };
     }
   }
-    
+
   private async Task ValidateUser(RegisterUserDto dto)
   {
     if (!InputValidators.IsValidEmail(dto.Email))

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Backend.Services;
-using Backend.DTOs.User;
+using Backend.Models.DTOs.User;
+using Backend.Models.Wrappers;
 
 namespace Backend.Controllers;
 
@@ -17,7 +18,7 @@ public class UserController(UserService userService) : ControllerBase
     {
       var profile = await _userService.GetUserProfileAsync(userId);
       if (profile == null)
-      { 
+      {
         return NotFound(new { message = "User not found" });
       }
 
@@ -30,7 +31,7 @@ public class UserController(UserService userService) : ControllerBase
   }
 
   [HttpGet("profiles")]
-  public async Task<ActionResult<IEnumerable<UserProfileDto>>> GetAllUserProfiles()
+  public async Task<ActionResult<ApiResponse<IEnumerable<UserProfileDto>>>> GetAllUserProfiles()
   {
     var profiles = await _userService.GetAllUserProfilesAsync();
     return Ok(profiles);

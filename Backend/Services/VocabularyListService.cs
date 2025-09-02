@@ -1,82 +1,126 @@
-using Backend.DTOs.Vocabulary;
+using Backend.Models.DTOs.Auth;
+using Backend.Models.DTOs.Vocabulary;
+using Backend.Models.Entities;
+using Backend.Models.Wrappers;
 using Backend.Repositories;
 using Backend.Repositories.Vocabularies;
 
 public class VocabularyListService
 {
-    private readonly IVocabularyListRepository _listRepo;
-    private readonly IUserRepository _userRepo;
+	private readonly IVocabularyListRepository _listRepo;
+	private readonly IUserRepository _userRepo;
+	public VocabularyListService(IVocabularyListRepository listRepo, IUserRepository userRepo)
+	{
+		_listRepo = listRepo;
+		_userRepo = userRepo;
+	}
+	public async Task<ApiResponse<VocabularyListDto>> CreateListAsync(Guid userId, CreateVocabularyListDto dto)
+	{
+		try
+		{
+			var user = await _userRepo.GetByIdAsync(userId)
+					?? throw new InvalidOperationException("User not found");
+			var list = MapToEntity(dto, user);
 
-    public VocabularyListService(IVocabularyListRepository listRepo, IUserRepository userRepo)
-    {
-        _listRepo = listRepo;
-        _userRepo = userRepo;
-    }
+			await _listRepo.AddListAsync(list);
 
-    // public async Task<VocabularyListDto> CreateListAsync(Guid userId, string title, string language)
-    // {
-    //     var user = await _userRepo.GetByIdAsync(userId);
-    //     if (user == null)
-    //         throw new KeyNotFoundException("User not found");
+			return new ApiResponse<VocabularyListDto>
+			{
+				Success = true,
+				Message = "List created successfully",
+				Data = MapToDto(list)
+			};
+		}
+		catch (Exception ex)
+		{
+			return new ApiResponse<VocabularyListDto>
+			{
+				Success = false,
+				Message = "List created unsuccessfully: " + ex.Message,
+				Data = null
+			};
+		}
+	}
 
-    //     var list = new VocabularyList
-    //     {
-    //         Id = Guid.NewGuid(),
-    //         Title = title,
-    //         Language = language,
-    //         UserId = userId
-    //     };
+	public async Task<ApiResponse<IEnumerable<VocabularyListDto>>> GetListsByUserAsync(Guid userId)
+	{
+		try
+		{
+			var lists = await _listRepo.GetListsByUser(userId);
+			var result = lists.Select(MapToDto).ToList();
 
-    //     await _listRepo.AddAsync(list);
+			return new ApiResponse<IEnumerable<VocabularyListDto>>
+			{
+				Success = true,
+				Message = "Lists retrieved successfully",
+				Data = result
+			};
+		}
+		catch (Exception ex)
+		{
+			return new ApiResponse<IEnumerable<VocabularyListDto>>
+			{
+				Success = false,
+				Message = "Lists retrieved unsuccessfully: " + ex.Message,
+				Data = null
+			};
+		}
+	}
 
-    //     return new VocabularyListDto
-    //     {
-    //         Id = list.Id,
-    //         Language = list.Language,
-    //         Vocabularies = []
-    //     };
-    // }
+	public async Task<ApiResponse<IEnumerable<VocabularyListDto>>> GetAllLists()
+	{
+		try
+		{
+			var lists = await _listRepo.GetAllLists();
+			var result = lists.Select(MapToDto).ToList();
 
-    public async Task<IEnumerable<VocabularyListDto>> GetListsByUserAsync(Guid userId)
-    {
-        var lists = await _listRepo.GetListsByUser(userId);
+			return new ApiResponse<IEnumerable<VocabularyListDto>>
+			{
+				Success = true,
+				Message = "Lists retrieved successfully",
+				Data = result
+			};
+		}
+		catch (Exception ex)
+		{
+			return new ApiResponse<IEnumerable<VocabularyListDto>>
+			{
+				Success = false,
+				Message = "Lists retrieved unsuccessfully: " + ex.Message,
+				Data = []
+			};
+		}
+	}
 
-        return lists.Select(list => new VocabularyListDto
-        {
-            Id = list.Id,
-            Language = list.Language,
-            Vocabularies = [.. list.Vocabularies.Select(v => new VocabularyDto
-            {
-                Id = v.Id,
-                Word = v.Word,
-                Translation = v.Translation
-            })]
-        });
-    }
-    public async Task<IEnumerable<VocabularyListDto>> GetAllLists()
-    {
-        var lists = await _listRepo.GetAllLists();
-
-        return lists.Select(list => new VocabularyListDto
-        {
-            Id = list.Id,
-            Language = list.Language,
-            Vocabularies = [.. list.Vocabularies.Select(v => new VocabularyDto
-            {
-                Id = v.Id,
-                Word = v.Word,
-                Translation = v.Translation
-            })]
-        });
-    }
-
-    // public async Task DeleteListAsync(Guid userId, Guid listId)
-    // {
-    //     var list = await _listRepo.GetByIdAsync(listId);
-
-    //     if (list == null || list.UserId != userId)
-    //         throw new UnauthorizedAccessException("You cannot delete this list.");
-
-    //     await _listRepo.DeleteAsync(list);
-    // }
+	private static VocabularyListDto MapToDto(VocabularyList list)
+	{
+		return new VocabularyListDto
+		{
+			Id = list.Id,
+			Language = list.Language,
+			Vocabularies = [.. list.Vocabularies.Select(v => new VocabularyDto
+					{
+							Id = v.Id,
+							Word = v.Word,
+							Translation = v.Translation
+					})]
+		};
+	}
+	private static VocabularyList MapToEntity(CreateVocabularyListDto dto, User user)
+	{
+		return new VocabularyList
+		{
+			Id = Guid.NewGuid(),
+			Title = dto.Title,
+			Language = dto.Language,
+			UserId = user.Id,
+			User = user,
+			Vocabularies = [.. dto.Vocabularies.Select(v => new Vocabulary
+						{
+							Id = Guid.NewGuid(),
+							Word = v.Word,
+							Translation = v.Translation
+						})]
+		};
+	}
 }

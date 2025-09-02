@@ -1,4 +1,5 @@
-namespace Backend.DTOs.Vocabulary;
+namespace Backend.Models.DTOs.Vocabulary;
+
 public class AddVocabularyDto
 {
   public Guid VocabularyListId { get; set; }

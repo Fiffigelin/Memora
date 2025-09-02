@@ -18,9 +18,11 @@ namespace Backend.Startup
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
-                    Description = "Enter JWT with Bearer prefix",
+                    Description = "Enter 'Bearer' [space] and then your valid token.",
                     Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT"
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -28,10 +30,10 @@ namespace Backend.Startup
                     {
                         new OpenApiSecurityScheme
                         {
-                            Reference = new OpenApiReference 
-                            { 
-                                Type = ReferenceType.SecurityScheme, 
-                                Id = "Bearer" 
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
                             }
                         },
                         Array.Empty<string>()

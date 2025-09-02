@@ -1,6 +1,6 @@
-using Backend.DTOs.Vocabulary;
+using Backend.Models.DTOs.Vocabulary;
 
-namespace Backend.DTOs.User;
+namespace Backend.Models.DTOs.User;
 
 public class UserProfileDto
 {

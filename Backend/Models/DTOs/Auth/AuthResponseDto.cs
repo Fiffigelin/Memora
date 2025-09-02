@@ -1,6 +1,6 @@
-using Backend.DTOs.User;
+using Backend.Models.DTOs.User;
 
-namespace Backend.DTOs.Auth;
+namespace Backend.Models.DTOs.Auth;
 
 public class AuthResponseDto
 {
