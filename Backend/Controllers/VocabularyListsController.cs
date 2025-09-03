@@ -42,13 +42,10 @@ public class VocabularyListsController : ControllerBase
     return Ok(list);
   }
 
+  [AllowAnonymous]
   [HttpGet("all")]
   public async Task<ActionResult<ApiResponse<IEnumerable<VocabularyListDto>>>> GetAllLists()
   {
-    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-      return Unauthorized();
-
     var lists = await _service.GetAllListsAsync();
     return Ok(lists);
   }

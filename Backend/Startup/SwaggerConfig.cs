@@ -10,19 +10,18 @@ namespace Backend.Startup
             {
                 c.SwaggerDoc("v1", new OpenApiInfo
                 {
-                    Title = "My API",
+                    Title = "Memora API",
                     Version = "v1",
-                    Description = "API for my app"
                 });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
-                    In = ParameterLocation.Header,
-                    Description = "Enter 'Bearer' [space] and then your valid token.",
                     Name = "Authorization",
                     Type = SecuritySchemeType.ApiKey,
                     Scheme = "Bearer",
-                    BearerFormat = "JWT"
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter 'Bearer' [space] and then your valid token."
                 });
 
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -49,7 +48,7 @@ namespace Backend.Startup
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>
                 {
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Memora API V1");
                     c.RoutePrefix = string.Empty;
                 });
             }

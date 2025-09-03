@@ -7,6 +7,7 @@ using System.Security.Claims;
 
 namespace Backend.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class UserController(UserService userService) : ControllerBase
@@ -38,29 +39,22 @@ public class UserController(UserService userService) : ControllerBase
     }
   }
 
+  [AllowAnonymous]
   [HttpGet("profiles")]
   public async Task<ActionResult<ApiResponse<IEnumerable<UserProfileDto>>>> GetAllUserProfiles()
   {
-    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-      return Unauthorized();
-
     var profiles = await _userService.GetAllUserProfilesAsync();
     return Ok(profiles);
   }
 
+  [AllowAnonymous]
   [HttpGet("all")]
   public async Task<ActionResult<ApiResponse<IEnumerable<UserDto>>>> GetAllUsers()
   {
-    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-    if (userIdClaim == null)
-      return Unauthorized();
-
     var users = await _userService.GetAllUsersAsync();
     return Ok(users);
   }
 
-  [Authorize]
   [HttpDelete]
   public async Task<ActionResult<ApiResponse<bool>>> DeleteUser()
   {
