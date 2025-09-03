@@ -9,63 +9,95 @@ namespace Backend.Services;
 public class UserService
 {
   private readonly IUserRepository _userRepo;
-  private readonly IVocabularyListRepository _vocabListRepo;
   private readonly VocabularyListService _vocabListService;
 
-  public UserService(IUserRepository userRepo, IVocabularyListRepository vocabListRepo, VocabularyListService vocabListService)
+  public UserService(IUserRepository userRepo, VocabularyListService vocabListService)
   {
     _userRepo = userRepo;
-    _vocabListRepo = vocabListRepo;
     _vocabListService = vocabListService;
   }
-
-  public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
+  public async Task<ApiResponse<IEnumerable<UserDto>>> GetAllUsersAsync()
   {
-    var users = await _userRepo.GetAllUsersAsync();
-    var lists = await _vocabListRepo.GetAllLists();
-
-    return users.Select(u => new UserDto
+    try
     {
-      Id = u.Id,
-      Username = u.Username,
-      PasswordHash = u.PasswordHash,
-      Email = u.Email,
-      VocabularyLists = [.. lists
-            .Where(vl => vl.UserId == u.Id)
+      var users = await _userRepo.GetAllUsersAsync();
+      var tasks = users.Select(async user =>
+      {
+        var listsResponse = await _vocabListService.GetListsByUserAsync(user.Id);
+        var lists = listsResponse.Success && listsResponse.Data != null
+      ? listsResponse.Data
+      : [];
+
+        return new UserDto
+        {
+          Id = user.Id,
+          Username = user.Username,
+          PasswordHash = user.PasswordHash,
+          Email = user.Email,
+          VocabularyLists = [.. lists
             .Select(vl => new VocabularyListSummaryDto
             {
                 Id = vl.Id,
                 Title = vl.Title,
                 VocabularyCount = vl.Vocabularies.Count
             })]
-    });
+        };
+      });
+
+      var userDtos = await Task.WhenAll(tasks);
+
+      return new ApiResponse<IEnumerable<UserDto>>
+      {
+        Success = true,
+        Message = "Userdtos retrieved successfully",
+        Data = userDtos
+      };
+    }
+    catch (Exception ex)
+    {
+      return new ApiResponse<IEnumerable<UserDto>>
+      {
+        Success = false,
+        Message = "Userdtos retrieved unsuccessfully " + ex.Message,
+        Data = []
+      };
+    }
   }
 
-  public async Task<UserProfileDto> GetUserProfileAsync(Guid userId)
+  public async Task<ApiResponse<UserProfileDto>> GetUserProfileAsync(Guid userId)
   {
-    var user = await _userRepo.GetByIdAsync(userId)
-        ?? throw new InvalidOperationException("User not found");
-    var lists = await _vocabListRepo.GetListsByUser(userId);
-
-    return new UserProfileDto
+    try
     {
-      Id = user.Id,
-      Username = user.Username,
-      Email = user.Email,
-      VocabularyLists = [.. lists.Select(vl => new VocabularyListDto
-            {
-              Id = vl.Id,
-              Title = vl.Title,
-              Language = vl.Language,
-              Vocabularies = [.. vl.Vocabularies
-                    .Select(v => new VocabularyDto
-                    {
-                      Id = v.Id,
-                      Word = v.Word,
-                      Translation = v.Translation
-                    })]
-            })]
-    };
+
+      var user = await _userRepo.GetByIdAsync(userId)
+          ?? throw new InvalidOperationException("User not found");
+      var listsResponse = await _vocabListService.GetListsByUserAsync(userId);
+      var lists = listsResponse.Success && listsResponse.Data != null ? listsResponse.Data : [];
+
+      var userProfile = new UserProfileDto
+      {
+        Id = user.Id,
+        Username = user.Username,
+        Email = user.Email,
+        VocabularyLists = [.. lists]
+      };
+
+      return new ApiResponse<UserProfileDto>
+      {
+        Success = true,
+        Message = "User profile retrieved successfully",
+        Data = userProfile
+      };
+    }
+    catch (Exception ex)
+    {
+      return new ApiResponse<UserProfileDto>
+      {
+        Success = false,
+        Message = "User profile retrieved unsuccessfully " + ex.Message,
+        Data = null
+      };
+    }
   }
 
   public async Task<ApiResponse<IEnumerable<UserProfileDto>>> GetAllUserProfilesAsync()
@@ -111,20 +143,38 @@ public class UserService
   }
 
 
-  public async Task<bool> DeleteUserAsync(Guid userId)
+  public async Task<ApiResponse<bool>> DeleteUserAsync(Guid userId)
   {
     try
     {
       var user = await _userRepo.GetByIdAsync(userId);
       if (user == null)
-        return false;
+      {
+        return new ApiResponse<bool>
+        {
+          Success = false,
+          Message = "User not found",
+          Data = false
+        };
+      }
 
       await _userRepo.DeleteAsync(user);
-      return true;
+
+      return new ApiResponse<bool>
+      {
+        Success = true,
+        Message = "User deleted successfully",
+        Data = true
+      };
     }
-    catch
+    catch (Exception ex)
     {
-      return false;
+      return new ApiResponse<bool>
+      {
+        Success = false,
+        Message = $"Failed to delete user: {ex.Message}",
+        Data = false
+      };
     }
   }
 }

@@ -1,4 +1,3 @@
-using Backend.Models.DTOs.Auth;
 using Backend.Models.DTOs.Vocabulary;
 using Backend.Models.Entities;
 using Backend.Models.Wrappers;
@@ -67,7 +66,7 @@ public class VocabularyListService
 		}
 	}
 
-	public async Task<ApiResponse<IEnumerable<VocabularyListDto>>> GetAllLists()
+	public async Task<ApiResponse<IEnumerable<VocabularyListDto>>> GetAllListsAsync()
 	{
 		try
 		{
@@ -97,6 +96,7 @@ public class VocabularyListService
 		return new VocabularyListDto
 		{
 			Id = list.Id,
+			Title = list.Title,
 			Language = list.Language,
 			Vocabularies = [.. list.Vocabularies.Select(v => new VocabularyDto
 					{

@@ -41,4 +41,15 @@ public class VocabularyListsController : ControllerBase
     var list = await _service.GetListsByUserAsync(userId);
     return Ok(list);
   }
+
+  [HttpGet("all")]
+  public async Task<ActionResult<ApiResponse<IEnumerable<VocabularyListDto>>>> GetAllLists()
+  {
+    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+      return Unauthorized();
+
+    var lists = await _service.GetAllListsAsync();
+    return Ok(lists);
+  }
 }

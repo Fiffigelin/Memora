@@ -44,7 +44,7 @@ public class AuthService : IAuthService
     return new AuthResponseDto
     {
       Token = token,
-      User = userProfile
+      User = userProfile.Data
     };
   }
 

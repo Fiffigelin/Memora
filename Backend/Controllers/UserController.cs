@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Backend.Services;
 using Backend.Models.DTOs.User;
 using Backend.Models.Wrappers;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Backend.Controllers;
 
@@ -11,11 +13,17 @@ public class UserController(UserService userService) : ControllerBase
 {
   private readonly UserService _userService = userService;
 
-  [HttpGet("{userId:guid}")]
-  public async Task<ActionResult<UserProfileDto>> GetUserProfile(Guid userId)
+  [HttpGet]
+  public async Task<ActionResult<ApiResponse<UserProfileDto>>> GetUserProfile()
   {
     try
     {
+      var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+      if (userIdClaim == null)
+        return Unauthorized();
+
+      var userId = Guid.Parse(userIdClaim.Value);
+
       var profile = await _userService.GetUserProfileAsync(userId);
       if (profile == null)
       {
@@ -33,22 +41,37 @@ public class UserController(UserService userService) : ControllerBase
   [HttpGet("profiles")]
   public async Task<ActionResult<ApiResponse<IEnumerable<UserProfileDto>>>> GetAllUserProfiles()
   {
+    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+      return Unauthorized();
+
     var profiles = await _userService.GetAllUserProfilesAsync();
     return Ok(profiles);
   }
 
   [HttpGet("all")]
-  public async Task<ActionResult<IEnumerable<UserDto>>> GetAllUsers()
+  public async Task<ActionResult<ApiResponse<IEnumerable<UserDto>>>> GetAllUsers()
   {
+    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+      return Unauthorized();
+
     var users = await _userService.GetAllUsersAsync();
     return Ok(users);
   }
 
-  [HttpDelete("{userId:guid}")]
-  public async Task<ActionResult> DeleteUser(Guid userId)
+  [Authorize]
+  [HttpDelete]
+  public async Task<ActionResult<ApiResponse<bool>>> DeleteUser()
   {
     try
     {
+      var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+      if (userIdClaim == null)
+        return Unauthorized();
+
+      var userId = Guid.Parse(userIdClaim.Value);
+
       await _userService.DeleteUserAsync(userId);
       return NoContent();
     }

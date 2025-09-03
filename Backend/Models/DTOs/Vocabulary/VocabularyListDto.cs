@@ -3,7 +3,7 @@ namespace Backend.Models.DTOs.Vocabulary;
 public class VocabularyListDto
 {
   public Guid Id { get; set; }
-  public string Title { get; set; } = string.Empty;
+  public required string Title { get; set; }
   public List<VocabularyDto> Vocabularies { get; set; } = [];
   public string Language { get; set; } = "English";
 }

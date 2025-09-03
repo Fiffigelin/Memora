@@ -2,7 +2,7 @@ namespace Backend.Models.DTOs.Vocabulary;
 
 public class CreateVocabularyListDto
 {
-    public string Title { get; set; } = string.Empty;
-    public string Language { get; set; } = "English";
+    public required string Title { get; set; }
+    public required string Language { get; set; }
     public List<CreateVocabularyDto> Vocabularies { get; set; } = [];
 }
