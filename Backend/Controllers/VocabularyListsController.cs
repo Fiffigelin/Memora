@@ -1,5 +1,6 @@
 using Backend.Models.DTOs.Vocabulary;
 using Backend.Models.Wrappers;
+using Memora.Models.DTOs.Vocabulary;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -48,5 +49,18 @@ public class VocabularyListsController : ControllerBase
   {
     var lists = await _service.GetAllListsAsync();
     return Ok(lists);
+  }
+
+  [HttpPut("update")]
+  public async Task<ActionResult<ApiResponse<VocabularyListDto>>> UpdateListById([FromBody] UpdateVocabularyListDto dto)
+  {
+    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+      return Unauthorized();
+
+    var userId = Guid.Parse(userIdClaim.Value);
+
+    var list = await _service.UpdateVocabularyListsAsync(userId, dto);
+    return Ok(list);
   }
 }

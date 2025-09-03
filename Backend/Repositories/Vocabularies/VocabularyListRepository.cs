@@ -33,4 +33,33 @@ public class VocabularyListRepository : IVocabularyListRepository
         .Include(vl => vl.Vocabularies)
         .ToListAsync();
   }
+
+  public async Task<VocabularyList?> GetListById(Guid listId)
+  {
+    return await _context.VocabularyLists
+        .Include(vl => vl.Vocabularies)
+        .FirstOrDefaultAsync(vl => vl.Id == listId);
+  }
+
+  public async Task<VocabularyList> UpdateListAsync(VocabularyList list, IEnumerable<Vocabulary> vocToRemove, IEnumerable<Vocabulary> vocToAdd)
+  {
+    if (vocToRemove?.Any() == true)
+    {
+      foreach (var v in vocToRemove)
+        _context.Vocabularies.Attach(v);
+
+      _context.Vocabularies.RemoveRange(vocToRemove);
+    }
+
+    if (vocToAdd?.Any() == true)
+    {
+      foreach (var v in vocToAdd)
+        _context.Vocabularies.Add(v);
+
+      _context.VocabularyLists.Attach(list);
+    }
+
+    await _context.SaveChangesAsync();
+    return list;
+  }
 }
