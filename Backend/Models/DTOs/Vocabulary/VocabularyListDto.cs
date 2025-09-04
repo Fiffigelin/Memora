@@ -6,4 +6,5 @@ public class VocabularyListDto
   public required string Title { get; set; }
   public List<VocabularyDto> Vocabularies { get; set; } = [];
   public string Language { get; set; } = "English";
+  public DateTime CreatedAt { get; set; }
 }

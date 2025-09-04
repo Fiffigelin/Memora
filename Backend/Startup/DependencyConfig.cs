@@ -22,6 +22,7 @@ public static class DependenciesConfig
         // Repos
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IVocabularyListRepository, VocabularyListRepository>();
+        builder.Services.AddScoped<IVocabularyRepository, VocabularyRepository>();
         builder.Services.AddScoped<ITokenService, TokenService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
         builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
@@ -31,6 +32,7 @@ public static class DependenciesConfig
         builder.Services.AddScoped<AuthService>();
         builder.Services.AddScoped<TokenService>();
         builder.Services.AddScoped<VocabularyListService>();
+        builder.Services.AddScoped<VocabularyService>();
 
     }
 }

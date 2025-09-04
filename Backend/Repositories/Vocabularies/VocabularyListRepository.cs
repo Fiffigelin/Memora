@@ -31,6 +31,7 @@ public class VocabularyListRepository : IVocabularyListRepository
   {
     return await _context.VocabularyLists
         .Include(vl => vl.Vocabularies)
+        .OrderByDescending(l => l.CreatedAt)
         .ToListAsync();
   }
 
@@ -61,5 +62,11 @@ public class VocabularyListRepository : IVocabularyListRepository
 
     await _context.SaveChangesAsync();
     return list;
+  }
+
+  public async Task DeleteList(VocabularyList list)
+  {
+    _context.VocabularyLists.Remove(list);
+    var result = await _context.SaveChangesAsync();
   }
 }

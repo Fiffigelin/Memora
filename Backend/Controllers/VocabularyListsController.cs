@@ -63,4 +63,17 @@ public class VocabularyListsController : ControllerBase
     var list = await _service.UpdateVocabularyListsAsync(userId, dto);
     return Ok(list);
   }
+
+  [HttpDelete("delete/{listId}")]
+  public async Task<ActionResult<ApiResponse<VocabularyListDto>>> DeleteListById(Guid listId)
+  {
+    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+      return Unauthorized();
+
+    var userId = Guid.Parse(userIdClaim.Value);
+
+    var list = await _service.DeleteListByIdAsync(userId, listId);
+    return Ok(list);
+  }
 }

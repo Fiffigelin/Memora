@@ -164,6 +164,40 @@ public class VocabularyListService
 		}
 	}
 
+	public async Task<ApiResponse<bool>> DeleteListByIdAsync(Guid userId, Guid listId)
+	{
+		try
+		{
+			var list = await _listRepo.GetListById(listId);
+			if (list == null || list.UserId != userId)
+			{
+				return new ApiResponse<bool>
+				{
+					Success = false,
+					Message = "List not found or not owned by user",
+					Data = false
+				};
+			}
+
+			await _listRepo.DeleteList(list);
+			return new ApiResponse<bool>
+			{
+				Success = true,
+				Message = "List deleted successfully",
+				Data = true
+			};
+		}
+		catch (Exception ex)
+		{
+			return new ApiResponse<bool>
+			{
+				Success = false,
+				Message = "Failed to delete list: " + ex.Message,
+				Data = false
+			};
+		}
+	}
+
 
 	private static VocabularyListDto MapToDto(VocabularyList list)
 	{
@@ -172,6 +206,7 @@ public class VocabularyListService
 			Id = list.Id,
 			Title = list.Title,
 			Language = list.Language,
+			CreatedAt = list.CreatedAt,
 			Vocabularies = [.. list.Vocabularies.Select(v => new VocabularyDto
 					{
 							Id = v.Id,

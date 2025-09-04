@@ -9,4 +9,5 @@ public interface IVocabularyListRepository
   Task<List<VocabularyList>> GetAllLists();
   Task<VocabularyList?> GetListById(Guid listId);
   Task<VocabularyList> UpdateListAsync(VocabularyList list, IEnumerable<Vocabulary> vocToRemove, IEnumerable<Vocabulary> vocToAdd);
+  Task DeleteList(VocabularyList list);
 }
