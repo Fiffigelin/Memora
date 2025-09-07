@@ -6,6 +6,7 @@ builder.AddDependencies();
 builder.Services.AddJwtAuthentication(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddSwaggerServices();
+builder.Services.AddCorsServices();
 
 var app = builder.Build();
 

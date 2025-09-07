@@ -40,6 +40,7 @@ public class UserController(UserService userService) : ControllerBase
   }
 
   [AllowAnonymous]
+  [ApiExplorerSettings(IgnoreApi = true)]
   [HttpGet("profiles")]
   public async Task<ActionResult<ApiResponse<IEnumerable<UserProfileDto>>>> GetAllUserProfiles()
   {
@@ -48,6 +49,7 @@ public class UserController(UserService userService) : ControllerBase
   }
 
   [AllowAnonymous]
+  [ApiExplorerSettings(IgnoreApi = true)]
   [HttpGet("all")]
   public async Task<ActionResult<ApiResponse<IEnumerable<UserDto>>>> GetAllUsers()
   {

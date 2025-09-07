@@ -43,6 +43,7 @@ public class VocabularyListsController : ControllerBase
     return Ok(list);
   }
 
+  [ApiExplorerSettings(IgnoreApi = true)]
   [AllowAnonymous]
   [HttpGet("all")]
   public async Task<ActionResult<ApiResponse<IEnumerable<VocabularyListDto>>>> GetAllLists()

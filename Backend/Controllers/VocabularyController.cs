@@ -1,8 +1,7 @@
-using Backend.Models.DTOs.Vocabulary;
 using Backend.Models.Wrappers;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
+[ApiExplorerSettings(IgnoreApi = true)]
 [ApiController]
 [Route("api/[controller]")]
 public class VocabularyController : ControllerBase
