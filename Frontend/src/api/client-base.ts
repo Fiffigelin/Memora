@@ -11,11 +11,9 @@ export default class ClientBase {
 
   transformOptions(options: RequestInit): Promise<RequestInit> {
     return new Promise<RequestInit>((resolve) => {
-      const headersDictionary: Record<string, string> =
-        options.headers as Record<string, string>;
+      const headersDictionary: Record<string, string> = options.headers as Record<string, string>;
 
-      headersDictionary["Strict-Transport-Security"] =
-        "max-age=31536000; includeSubDomains";
+      headersDictionary["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains";
       headersDictionary["X-Frame-Options"] = "SAMEORIGIN";
 
       if (this.configurationProvider?.accessToken) {
@@ -38,4 +36,3 @@ export class ConfigurationProvider {
     this.url = url;
   }
 }
-
