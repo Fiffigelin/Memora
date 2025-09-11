@@ -1,0 +1,40 @@
+.btn-container {
+  width: 100%;
+  padding: 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+
+  &.default {
+    background-color: #2e93ff;
+    color: white;
+    &:hover:not(.disabled) {
+      background-color: #0d72df;
+    }
+  }
+
+  &.inactive {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+  }
+
+  &.warning {
+    background-color: #dc3545;
+    color: white;
+    &:hover:not(.disabled) {
+      background-color: #b52a36;
+    }
+  }
+
+  &.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+.btn-font {
+  font-weight: 700;
+  font-size: large;
+}

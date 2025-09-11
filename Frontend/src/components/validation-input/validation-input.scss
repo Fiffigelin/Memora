@@ -1,0 +1,34 @@
+.input-container {
+  padding: 8px;
+  max-width: 240px;
+
+  .title {
+    color: grey;
+    font-size: large;
+  }
+
+  .error-msg {
+    color: red;
+    font-size: small;
+  }
+  
+  p {
+    margin: 4px;
+  }
+  
+  .input-field {
+    width: 100%;
+    height: 20px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    transition: border-color 0.2s ease;
+    font-size: large;
+    
+    &:focus {
+      outline: none;
+      border: 1px solid blue;
+      box-shadow: 0 0 0 2px rgba(0, 0, 255, 0.2);
+    }
+  }    
+}

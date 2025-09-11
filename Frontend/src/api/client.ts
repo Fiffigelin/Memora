@@ -10,449 +10,566 @@ import ClientBase, { ConfigurationProvider } from "./client-base";
 // ReSharper disable InconsistentNaming
 
 export class Client extends ClientBase {
-    private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+  private http: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> };
+  private baseUrl: string;
+  protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-    constructor(configuration: ConfigurationProvider, baseUrl?: string, http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }) {
-        super(configuration);
-        this.http = http ? http : window as any;
-        this.baseUrl = this.getBaseUrl("", baseUrl);
+  constructor(
+    configuration: ConfigurationProvider,
+    baseUrl?: string,
+    http?: { fetch(url: RequestInfo, init?: RequestInit): Promise<Response> }
+  ) {
+    super(configuration);
+    this.http = http ? http : (window as any);
+    this.baseUrl = this.getBaseUrl("", baseUrl);
+  }
+
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  login(body: LoginRequestDto | undefined): Promise<AuthResponseDto> {
+    console.log(this.baseUrl);
+    let url_ = this.baseUrl + "/api/Auth/login";
+    url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = JSON.stringify(body);
+
+    let options_: RequestInit = {
+      body: content_,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    };
+
+    return this.transformOptions(options_)
+      .then((transformedOptions_) => {
+        console.log(this.baseUrl);
+        return this.http.fetch(url_, transformedOptions_);
+      })
+      .then((_response: Response) => {
+        return this.processLogin(_response);
+      });
+  }
+
+  protected processLogin(response: Response): Promise<AuthResponseDto> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @param body (optional) 
-     * @return OK
-     */
-    login(body: LoginRequestDto | undefined): Promise<AuthResponseDto> {
-        let url_ = this.baseUrl + "/api/Auth/login";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: RequestInit = {
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processLogin(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        result200 =
+          _responseText === ""
+            ? null
+            : (JSON.parse(_responseText, this.jsonParseReviver) as AuthResponseDto);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<AuthResponseDto>(null as any);
+  }
 
-    protected processLogin(response: Response): Promise<AuthResponseDto> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as AuthResponseDto;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<AuthResponseDto>(null as any);
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  register(body: RegisterUserDto | undefined): Promise<void> {
+    let url_ = this.baseUrl + "/api/Auth/register";
+    url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = JSON.stringify(body);
+
+    let options_: RequestInit = {
+      body: content_,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    return this.transformOptions(options_)
+      .then((transformedOptions_) => {
+        return this.http.fetch(url_, transformedOptions_);
+      })
+      .then((_response: Response) => {
+        return this.processRegister(_response);
+      });
+  }
+
+  protected processRegister(response: Response): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @param body (optional) 
-     * @return OK
-     */
-    register(body: RegisterUserDto | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/Auth/register";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: RequestInit = {
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processRegister(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<void>(null as any);
+  }
 
-    protected processRegister(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(null as any);
+  /**
+   * @return OK
+   */
+  userGET(): Promise<UserProfileDtoApiResponse> {
+    let url_ = this.baseUrl + "/api/User";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_: RequestInit = {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    };
+
+    return this.transformOptions(options_)
+      .then((transformedOptions_) => {
+        return this.http.fetch(url_, transformedOptions_);
+      })
+      .then((_response: Response) => {
+        return this.processUserGET(_response);
+      });
+  }
+
+  protected processUserGET(response: Response): Promise<UserProfileDtoApiResponse> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @return OK
-     */
-    userGET(): Promise<UserProfileDtoApiResponse> {
-        let url_ = this.baseUrl + "/api/User";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processUserGET(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        result200 =
+          _responseText === ""
+            ? null
+            : (JSON.parse(_responseText, this.jsonParseReviver) as UserProfileDtoApiResponse);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<UserProfileDtoApiResponse>(null as any);
+  }
 
-    protected processUserGET(response: Response): Promise<UserProfileDtoApiResponse> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as UserProfileDtoApiResponse;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<UserProfileDtoApiResponse>(null as any);
+  /**
+   * @return OK
+   */
+  userDELETE(): Promise<BooleanApiResponse> {
+    let url_ = this.baseUrl + "/api/User";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_: RequestInit = {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+      },
+    };
+
+    return this.transformOptions(options_)
+      .then((transformedOptions_) => {
+        return this.http.fetch(url_, transformedOptions_);
+      })
+      .then((_response: Response) => {
+        return this.processUserDELETE(_response);
+      });
+  }
+
+  protected processUserDELETE(response: Response): Promise<BooleanApiResponse> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @return OK
-     */
-    userDELETE(): Promise<BooleanApiResponse> {
-        let url_ = this.baseUrl + "/api/User";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "DELETE",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processUserDELETE(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        result200 =
+          _responseText === ""
+            ? null
+            : (JSON.parse(_responseText, this.jsonParseReviver) as BooleanApiResponse);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<BooleanApiResponse>(null as any);
+  }
 
-    protected processUserDELETE(response: Response): Promise<BooleanApiResponse> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as BooleanApiResponse;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<BooleanApiResponse>(null as any);
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  vocabularyLists(body: CreateVocabularyListDto | undefined): Promise<void> {
+    let url_ = this.baseUrl + "/api/VocabularyLists";
+    url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = JSON.stringify(body);
+
+    let options_: RequestInit = {
+      body: content_,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    return this.transformOptions(options_)
+      .then((transformedOptions_) => {
+        return this.http.fetch(url_, transformedOptions_);
+      })
+      .then((_response: Response) => {
+        return this.processVocabularyLists(_response);
+      });
+  }
+
+  protected processVocabularyLists(response: Response): Promise<void> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @param body (optional) 
-     * @return OK
-     */
-    vocabularyLists(body: CreateVocabularyListDto | undefined): Promise<void> {
-        let url_ = this.baseUrl + "/api/VocabularyLists";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: RequestInit = {
-            body: content_,
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processVocabularyLists(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        return;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<void>(null as any);
+  }
 
-    protected processVocabularyLists(response: Response): Promise<void> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            return;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<void>(null as any);
+  /**
+   * @return OK
+   */
+  user(): Promise<VocabularyListDtoIEnumerableApiResponse> {
+    let url_ = this.baseUrl + "/api/VocabularyLists/user";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_: RequestInit = {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    };
+
+    return this.transformOptions(options_)
+      .then((transformedOptions_) => {
+        return this.http.fetch(url_, transformedOptions_);
+      })
+      .then((_response: Response) => {
+        return this.processUser(_response);
+      });
+  }
+
+  protected processUser(response: Response): Promise<VocabularyListDtoIEnumerableApiResponse> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @return OK
-     */
-    user(): Promise<VocabularyListDtoIEnumerableApiResponse> {
-        let url_ = this.baseUrl + "/api/VocabularyLists/user";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "GET",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processUser(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        result200 =
+          _responseText === ""
+            ? null
+            : (JSON.parse(
+                _responseText,
+                this.jsonParseReviver
+              ) as VocabularyListDtoIEnumerableApiResponse);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<VocabularyListDtoIEnumerableApiResponse>(null as any);
+  }
 
-    protected processUser(response: Response): Promise<VocabularyListDtoIEnumerableApiResponse> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as VocabularyListDtoIEnumerableApiResponse;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<VocabularyListDtoIEnumerableApiResponse>(null as any);
+  /**
+   * @param body (optional)
+   * @return OK
+   */
+  update(body: UpdateVocabularyListDto | undefined): Promise<VocabularyListDtoApiResponse> {
+    let url_ = this.baseUrl + "/api/VocabularyLists/update";
+    url_ = url_.replace(/[?&]$/, "");
+
+    const content_ = JSON.stringify(body);
+
+    let options_: RequestInit = {
+      body: content_,
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    };
+
+    return this.transformOptions(options_)
+      .then((transformedOptions_) => {
+        return this.http.fetch(url_, transformedOptions_);
+      })
+      .then((_response: Response) => {
+        return this.processUpdate(_response);
+      });
+  }
+
+  protected processUpdate(response: Response): Promise<VocabularyListDtoApiResponse> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @param body (optional) 
-     * @return OK
-     */
-    update(body: UpdateVocabularyListDto | undefined): Promise<VocabularyListDtoApiResponse> {
-        let url_ = this.baseUrl + "/api/VocabularyLists/update";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_: RequestInit = {
-            body: content_,
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processUpdate(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        result200 =
+          _responseText === ""
+            ? null
+            : (JSON.parse(_responseText, this.jsonParseReviver) as VocabularyListDtoApiResponse);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
+    return Promise.resolve<VocabularyListDtoApiResponse>(null as any);
+  }
 
-    protected processUpdate(response: Response): Promise<VocabularyListDtoApiResponse> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as VocabularyListDtoApiResponse;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<VocabularyListDtoApiResponse>(null as any);
+  /**
+   * @return OK
+   */
+  delete(listId: string): Promise<VocabularyListDtoApiResponse> {
+    let url_ = this.baseUrl + "/api/VocabularyLists/delete/{listId}";
+    if (listId === undefined || listId === null)
+      throw new globalThis.Error("The parameter 'listId' must be defined.");
+    url_ = url_.replace("{listId}", encodeURIComponent("" + listId));
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_: RequestInit = {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+      },
+    };
+
+    return this.transformOptions(options_)
+      .then((transformedOptions_) => {
+        return this.http.fetch(url_, transformedOptions_);
+      })
+      .then((_response: Response) => {
+        return this.processDelete(_response);
+      });
+  }
+
+  protected processDelete(response: Response): Promise<VocabularyListDtoApiResponse> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
     }
-
-    /**
-     * @return OK
-     */
-    delete(listId: string): Promise<VocabularyListDtoApiResponse> {
-        let url_ = this.baseUrl + "/api/VocabularyLists/delete/{listId}";
-        if (listId === undefined || listId === null)
-            throw new globalThis.Error("The parameter 'listId' must be defined.");
-        url_ = url_.replace("{listId}", encodeURIComponent("" + listId));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_: RequestInit = {
-            method: "DELETE",
-            headers: {
-                "Accept": "application/json"
-            }
-        };
-
-        return this.transformOptions(options_).then(transformedOptions_ => {
-            return this.http.fetch(url_, transformedOptions_);
-        }).then((_response: Response) => {
-            return this.processDelete(_response);
-        });
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        result200 =
+          _responseText === ""
+            ? null
+            : (JSON.parse(_responseText, this.jsonParseReviver) as VocabularyListDtoApiResponse);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
     }
-
-    protected processDelete(response: Response): Promise<VocabularyListDtoApiResponse> {
-        const status = response.status;
-        let _headers: any = {}; if (response.headers && response.headers.forEach) { response.headers.forEach((v: any, k: any) => _headers[k] = v); };
-        if (status === 200) {
-            return response.text().then((_responseText) => {
-            let result200: any = null;
-            result200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as VocabularyListDtoApiResponse;
-            return result200;
-            });
-        } else if (status !== 200 && status !== 204) {
-            return response.text().then((_responseText) => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            });
-        }
-        return Promise.resolve<VocabularyListDtoApiResponse>(null as any);
-    }
+    return Promise.resolve<VocabularyListDtoApiResponse>(null as any);
+  }
 }
 
 export interface AuthResponseDto {
-    token?: string | undefined;
-    user?: UserProfileDto;
+  token?: string | undefined;
+  user?: UserProfileDto;
 }
 
 export interface BooleanApiResponse {
-    success?: boolean;
-    message: string | undefined;
-    data?: boolean;
+  success?: boolean;
+  message: string | undefined;
+  data?: boolean;
 }
 
 export interface CreateVocabularyDto {
-    word?: string | undefined;
-    translation?: string | undefined;
+  word?: string | undefined;
+  translation?: string | undefined;
 }
 
 export interface CreateVocabularyListDto {
-    title: string | undefined;
-    language: string | undefined;
-    vocabularies?: CreateVocabularyDto[] | undefined;
+  title: string | undefined;
+  language: string | undefined;
+  vocabularies?: CreateVocabularyDto[] | undefined;
 }
 
 export interface LoginRequestDto {
-    email?: string | undefined;
-    password?: string | undefined;
+  email?: string | undefined;
+  password?: string | undefined;
 }
 
 export interface RegisterUserDto {
-    username?: string | undefined;
-    email?: string | undefined;
-    password?: string | undefined;
+  username?: string | undefined;
+  email?: string | undefined;
+  password?: string | undefined;
 }
 
 export interface UpdateVocabularyDto {
-    id?: string | undefined;
-    word?: string | undefined;
-    translation?: string | undefined;
+  id?: string | undefined;
+  word?: string | undefined;
+  translation?: string | undefined;
 }
 
 export interface UpdateVocabularyListDto {
-    id: string;
-    title?: string | undefined;
-    vocabularies: UpdateVocabularyDto[] | undefined;
+  id: string;
+  title?: string | undefined;
+  vocabularies: UpdateVocabularyDto[] | undefined;
 }
 
 export interface UserProfileDto {
-    id?: string;
-    username?: string | undefined;
-    email?: string | undefined;
-    vocabularyLists?: VocabularyListDto[] | undefined;
+  id?: string;
+  username?: string | undefined;
+  email?: string | undefined;
+  vocabularyLists?: VocabularyListDto[] | undefined;
 }
 
 export interface UserProfileDtoApiResponse {
-    success?: boolean;
-    message: string | undefined;
-    data?: UserProfileDto;
+  success?: boolean;
+  message: string | undefined;
+  data?: UserProfileDto;
 }
 
 export interface VocabularyDto {
-    id?: string;
-    word?: string | undefined;
-    translation?: string | undefined;
+  id?: string;
+  word?: string | undefined;
+  translation?: string | undefined;
 }
 
 export interface VocabularyListDto {
-    id?: string;
-    title: string | undefined;
-    vocabularies?: VocabularyDto[] | undefined;
-    language?: string | undefined;
-    createdAt?: Date;
+  id?: string;
+  title: string | undefined;
+  vocabularies?: VocabularyDto[] | undefined;
+  language?: string | undefined;
+  createdAt?: Date;
 }
 
 export interface VocabularyListDtoApiResponse {
-    success?: boolean;
-    message: string | undefined;
-    data?: VocabularyListDto;
+  success?: boolean;
+  message: string | undefined;
+  data?: VocabularyListDto;
 }
 
 export interface VocabularyListDtoIEnumerableApiResponse {
-    success?: boolean;
-    message: string | undefined;
-    data?: VocabularyListDto[] | undefined;
+  success?: boolean;
+  message: string | undefined;
+  data?: VocabularyListDto[] | undefined;
 }
 
 export class SwaggerException extends Error {
-    override message: string;
-    status: number;
-    response: string;
-    headers: { [key: string]: any; };
-    result: any;
+  override message: string;
+  status: number;
+  response: string;
+  headers: { [key: string]: any };
+  result: any;
 
-    constructor(message: string, status: number, response: string, headers: { [key: string]: any; }, result: any) {
-        super();
+  constructor(
+    message: string,
+    status: number,
+    response: string,
+    headers: { [key: string]: any },
+    result: any
+  ) {
+    super();
 
-        this.message = message;
-        this.status = status;
-        this.response = response;
-        this.headers = headers;
-        this.result = result;
-    }
+    this.message = message;
+    this.status = status;
+    this.response = response;
+    this.headers = headers;
+    this.result = result;
+  }
 
-    protected isSwaggerException = true;
+  protected isSwaggerException = true;
 
-    static isSwaggerException(obj: any): obj is SwaggerException {
-        return obj.isSwaggerException === true;
-    }
+  static isSwaggerException(obj: any): obj is SwaggerException {
+    return obj.isSwaggerException === true;
+  }
 }
 
-function throwException(message: string, status: number, response: string, headers: { [key: string]: any; }, result?: any): any {
-    if (result !== null && result !== undefined)
-        throw result;
-    else
-        throw new SwaggerException(message, status, response, headers, null);
+function throwException(
+  message: string,
+  status: number,
+  response: string,
+  headers: { [key: string]: any },
+  result?: any
+): any {
+  if (result !== null && result !== undefined) throw result;
+  else throw new SwaggerException(message, status, response, headers, null);
 }
