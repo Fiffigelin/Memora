@@ -8,7 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 // import Dashboard from "../pages/Dashboard";
 // import VocabularyLists from "../pages/VocabularyLists";
 // import Profile from "../pages/Profile";
-import PublicLayout from "../layouts/public-layout";
+import PublicLayout from "../layouts/public/public-layout";
 import LoginPage from "../pages/public/login-page";
 import RegisterPage from "../pages/public/register-page";
 import ProtectedRoute from "./protected-route";
@@ -22,7 +22,6 @@ export default function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public layout */}
         <Route element={<PublicLayout />}>
           <Route path="/" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />

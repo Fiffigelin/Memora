@@ -1,11 +1,11 @@
-import { useCallback, useState } from "react";
 import ValidationInput from "../../components/validation-input/validation-input";
-import "./login-page.scss";
-import type { LoginRequestDto } from "../../api/client";
-import { isEmail } from "../../utils/validations";
 import CommonButton from "../../components/common-button/common-button";
+import { useCallback, useState } from "react";
+import { LoginRequestDto } from "../../api/client";
+import { isEmail } from "../../utils/validations";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./hooks/use-login";
+import "./login-page.scss";
 
 export default function LoginPage() {
   const navigate = useNavigate();

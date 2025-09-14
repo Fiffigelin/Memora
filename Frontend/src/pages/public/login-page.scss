@@ -1,56 +1,174 @@
-.login-page {
-  gap: 16px;
-  color: black;
-  height: 100%;
-  width: 100%;
+@media (max-width: 360px) {
+  .login-page {
+    color: black;
+    height: 100%;
+    width: 100%;
 
-  .login-container {
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 12px;
-    }
-
-    .card {
+    .login-container {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
-      width: 50%;
-      border-radius: 16px;
-      background-color: white;
-      padding: 16px;
-      max-width: 360px;
+      width: 100%;
 
-      .card-title {
-        .card-text {
-          gap: 10px;
-          display: flex;
-          flex-direction: row;
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 12px;
+      }
 
-          p {
-            font-size: large;
+      .card {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        border-radius: 16px;
+        background-color: white;
+        padding: 16px;
+        width: 100%;
+
+        .card-title {
+          .card-text {
+            p {
+              font-size: medium;
+              margin: 0;
+            }
+
+            .uri {
+              font-weight: 600;
+              color: purple;
+              text-decoration: underline;
+            }
+          }
+        }
+
+        .card-content {
+          .card-input {
+            width: 100%;
           }
 
-          .uri {
-            font-weight: 600;
-            color: purple;
-            text-decoration: underline;
-            cursor: pointer;
+          .card-button {
+            padding: 30px 0px;
           }
         }
       }
+    }
+  }
+}
 
-      .card-content {
-        .card-input {
-          flex-direction: column;
+@media (min-width: 361px) and (max-width: 768px) {
+  .login-page {
+    color: black;
+    height: 100%;
+    width: 100%;
+    .login-container {
+      display: flex;
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 12px;
+      }
+
+      .card {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        border-radius: 16px;
+        background-color: white;
+        padding: 16px;
+        width: 100%;
+
+        .card-title {
+          .card-text {
+            p {
+              font-size: medium;
+              margin: 0;
+            }
+
+            .uri {
+              font-weight: 600;
+              color: purple;
+              text-decoration: underline;
+            }
+          }
         }
 
-        .card-button {
-          padding: 30px 0;
+        .card-content {
+          .card-input {
+            width: 100%;
+          }
+
+          .card-button {
+            padding: 30px 0 20px 0;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1280px) {
+  .public-container {
+    background-color: lightyellow;
+  }
+}
+
+@media (min-width: 1281px) and (max-width: 1920px) {
+  .public-container {
+    background-color: lightcoral;
+  }
+}
+
+@media (min-width: 1921px) {
+  .login-page {
+    gap: 16px;
+    color: black;
+    height: 100%;
+    width: 100%;
+
+    .login-container {
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      h1 {
+        font-size: 2rem;
+        margin-bottom: 12px;
+      }
+
+      p {
+        font-size: large;
+      }
+
+      .card {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 50%;
+        border-radius: 16px;
+        background-color: white;
+        padding: 16px;
+        max-width: 360px;
+
+        .card-title {
+          .card-text {
+            gap: 10px;
+            display: flex;
+            flex-direction: row;
+
+            .uri {
+              font-weight: 600;
+              color: purple;
+              text-decoration: underline;
+              cursor: pointer;
+            }
+          }
+        }
+
+        .card-content {
+          .card-input {
+            flex-direction: column;
+          }
+
+          .card-button {
+            padding: 30px 0;
+          }
         }
       }
     }
