@@ -6,11 +6,11 @@ export default function PublicLayout() {
 
   return (
     <div className="public-container">
-      <div className="split left">
+      <div className="left">
         <img className="img" src={imgPath} />
       </div>
 
-      <div className="split right">
+      <div className="right">
         <Outlet />
       </div>
     </div>

@@ -1,13 +1,16 @@
 @media (max-width: 360px) {
   .login-page {
     color: black;
+    padding: 24px 0px;
+    width: 100%;
 
     .login-container {
       display: flex;
+      width: 100%;
 
       h1 {
         font-size: 2rem;
-        margin-bottom: 12px;
+        margin: 12px 0;
       }
 
       .card {
@@ -16,7 +19,8 @@
         gap: 16px;
         border-radius: 16px;
         background-color: white;
-        padding: 16px;
+        width: 100%;
+        margin: 12px;
 
         .card-title {
           .card-text {
@@ -47,182 +51,182 @@
   }
 }
 
-@media (min-width: 361px) and (max-width: 768px) {
-  .login-page {
-    color: black;
-    height: 100%;
-    width: 100%;
-    .login-container {
-      display: flex;
-      justify-content: center;
+// @media (min-width: 361px) and (max-width: 768px) {
+//   .login-page {
+//     color: black;
+//     height: 100%;
+//     width: 100%;
+//     .login-container {
+//       display: flex;
+//       justify-content: center;
 
-      h1 {
-        font-size: 2rem;
-        margin-bottom: 12px;
-      }
+//       h1 {
+//         font-size: 2rem;
+//         margin-bottom: 12px;
+//       }
 
-      .card {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-        border-radius: 16px;
-        background-color: white;
-        padding: 16px;
-        width: 100%;
-        max-width: 340px;
+//       .card {
+//         display: flex;
+//         flex-direction: column;
+//         gap: 16px;
+//         border-radius: 16px;
+//         background-color: white;
+//         padding: 16px;
+//         width: 100%;
+//         max-width: 340px;
 
-        .card-title {
-          .card-text {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            p {
-              font-size: medium;
-              margin: 0;
-            }
+//         .card-title {
+//           .card-text {
+//             display: flex;
+//             flex-direction: row;
+//             justify-content: space-between;
+//             p {
+//               font-size: medium;
+//               margin: 0;
+//             }
 
-            .uri {
-              font-weight: 600;
-              color: purple;
-              text-decoration: underline;
-            }
-          }
-        }
+//             .uri {
+//               font-weight: 600;
+//               color: purple;
+//               text-decoration: underline;
+//             }
+//           }
+//         }
 
-        .card-content {
-          .card-input {
-            width: 100%;
-          }
+//         .card-content {
+//           .card-input {
+//             width: 100%;
+//           }
 
-          .card-button {
-            padding: 30px 0 20px 0;
-          }
-        }
-      }
-    }
-  }
-}
+//           .card-button {
+//             padding: 30px 0 20px 0;
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
 
-@media (min-width: 769px) and (max-width: 1280px) {
-  .login-page {
-    width: 100%;
-    .login-container {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      p {
-        font-size: large;
-      }
+// @media (min-width: 769px) and (max-width: 1280px) {
+//   .login-page {
+//     width: 100%;
+//     .login-container {
+//       display: flex;
+//       justify-content: center;
+//       gap: 12px;
+//       p {
+//         font-size: large;
+//       }
 
-      .card {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        width: 50%;
-        border-radius: 16px;
-        background-color: white;
-        padding: 16px;
-        width: 360px;
-        max-width: 360px;
+//       .card {
+//         display: flex;
+//         flex-direction: column;
+//         gap: 12px;
+//         width: 50%;
+//         border-radius: 16px;
+//         background-color: white;
+//         padding: 16px;
+//         width: 360px;
+//         max-width: 360px;
 
-        .card-title {
-          .card-text {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
+//         .card-title {
+//           .card-text {
+//             display: flex;
+//             flex-direction: row;
+//             justify-content: space-between;
 
-            .uri {
-              font-weight: 600;
-              color: purple;
-              text-decoration: underline;
-              cursor: pointer;
-            }
-          }
-        }
+//             .uri {
+//               font-weight: 600;
+//               color: purple;
+//               text-decoration: underline;
+//               cursor: pointer;
+//             }
+//           }
+//         }
 
-        .card-content {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
+//         .card-content {
+//           display: flex;
+//           flex-direction: column;
+//           gap: 12px;
 
-          .card-input {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-          }
+//           .card-input {
+//             display: flex;
+//             flex-direction: column;
+//             gap: 12px;
+//           }
 
-          .card-button {
-            padding: 30px 0;
-          }
-        }
-      }
-    }
-  }
-}
+//           .card-button {
+//             padding: 30px 0;
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
 
-@media (min-width: 1281px) and (max-width: 1920px) {
-  .public-container {
-    background-color: lightcoral;
-  }
-}
+// @media (min-width: 1281px) and (max-width: 1920px) {
+//   .public-container {
+//     background-color: lightcoral;
+//   }
+// }
 
-@media (min-width: 1921px) {
-  .login-page {
-    gap: 16px;
-    color: black;
-    height: 100%;
-    width: 100%;
+// @media (min-width: 1921px) {
+//   .login-page {
+//     gap: 16px;
+//     color: black;
+//     height: 100%;
+//     width: 100%;
 
-    .login-container {
-      padding: 20px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+//     .login-container {
+//       padding: 20px;
+//       display: flex;
+//       justify-content: center;
+//       align-items: center;
 
-      h1 {
-        font-size: 2rem;
-        margin-bottom: 12px;
-      }
+//       h1 {
+//         font-size: 2rem;
+//         margin-bottom: 12px;
+//       }
 
-      p {
-        font-size: large;
-      }
+//       p {
+//         font-size: large;
+//       }
 
-      .card {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-        width: 50%;
-        border-radius: 16px;
-        background-color: white;
-        padding: 16px;
-        max-width: 360px;
+//       .card {
+//         display: flex;
+//         flex-direction: column;
+//         gap: 12px;
+//         width: 50%;
+//         border-radius: 16px;
+//         background-color: white;
+//         padding: 16px;
+//         max-width: 360px;
 
-        .card-title {
-          .card-text {
-            gap: 10px;
-            display: flex;
-            flex-direction: row;
+//         .card-title {
+//           .card-text {
+//             gap: 10px;
+//             display: flex;
+//             flex-direction: row;
 
-            .uri {
-              font-weight: 600;
-              color: purple;
-              text-decoration: underline;
-              cursor: pointer;
-            }
-          }
-        }
+//             .uri {
+//               font-weight: 600;
+//               color: purple;
+//               text-decoration: underline;
+//               cursor: pointer;
+//             }
+//           }
+//         }
 
-        .card-content {
-          .card-input {
-            flex-direction: column;
-          }
+//         .card-content {
+//           .card-input {
+//             flex-direction: column;
+//           }
 
-          .card-button {
-            padding: 30px 0;
-          }
-        }
-      }
-    }
-  }
-}
+//           .card-button {
+//             padding: 30px 0;
+//           }
+//         }
+//       }
+//     }
+//   }
+// }
