@@ -1,12 +1,9 @@
 @media (max-width: 360px) {
   .login-page {
     color: black;
-    height: 100%;
-    width: 100%;
 
     .login-container {
       display: flex;
-      width: 100%;
 
       h1 {
         font-size: 2rem;
@@ -20,7 +17,6 @@
         border-radius: 16px;
         background-color: white;
         padding: 16px;
-        width: 100%;
 
         .card-title {
           .card-text {
@@ -58,6 +54,7 @@
     width: 100%;
     .login-container {
       display: flex;
+      justify-content: center;
 
       h1 {
         font-size: 2rem;
@@ -72,9 +69,13 @@
         background-color: white;
         padding: 16px;
         width: 100%;
+        max-width: 340px;
 
         .card-title {
           .card-text {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
             p {
               font-size: medium;
               margin: 0;
@@ -103,8 +104,59 @@
 }
 
 @media (min-width: 769px) and (max-width: 1280px) {
-  .public-container {
-    background-color: lightyellow;
+  .login-page {
+    width: 100%;
+    .login-container {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      p {
+        font-size: large;
+      }
+
+      .card {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        width: 50%;
+        border-radius: 16px;
+        background-color: white;
+        padding: 16px;
+        width: 360px;
+        max-width: 360px;
+
+        .card-title {
+          .card-text {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            .uri {
+              font-weight: 600;
+              color: purple;
+              text-decoration: underline;
+              cursor: pointer;
+            }
+          }
+        }
+
+        .card-content {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+
+          .card-input {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .card-button {
+            padding: 30px 0;
+          }
+        }
+      }
+    }
   }
 }
 
