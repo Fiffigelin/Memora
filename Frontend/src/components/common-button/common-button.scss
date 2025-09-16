@@ -4,13 +4,13 @@
   border-radius: 8px;
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  transition: background-color 0.2s linear;
 
   &.default {
-    background-color: #2e93ff;
+    background-color: #a57fec;
     color: white;
     &:hover:not(.disabled) {
-      background-color: #0d72df;
+      background-color: #8f5dec;
     }
   }
 

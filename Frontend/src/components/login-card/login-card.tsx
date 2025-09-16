@@ -9,14 +9,14 @@ import "./login-card.scss";
 import CommonButton from "../common-button/common-button";
 
 export default function LoginCard() {
-  const [flipped, setFlipped] = useState(false);
-
   const navigate = useNavigate();
+  const { login } = useAuth();
 
+  const [flipped, setFlipped] = useState(false);
   const [user, setUser] = useState<LoginRequestDto>();
   const [validLoginEmail, setLoginEmailValid] = useState<boolean>(true);
 
-  const { login } = useAuth();
+  const isFormValid = !!user?.email && validLoginEmail && !!user?.password;
 
   const updateLoginUser = useCallback(
     (property: keyof LoginRequestDto, value: string | undefined) => {
@@ -84,7 +84,7 @@ export default function LoginCard() {
                   onChange={(value) => {
                     updateLoginEmail(value);
                   }}
-                  isValid={validLoginEmail}
+                  isValid={user?.email?.trim() !== "" && validLoginEmail}
                 />
                 <ValidationInput
                   id="password"
@@ -104,7 +104,7 @@ export default function LoginCard() {
                   onClick={validateLogin}
                   title="LOGIN"
                   variant="default"
-                  disabled={false}
+                  disabled={!isFormValid}
                 />
               </div>
             </div>

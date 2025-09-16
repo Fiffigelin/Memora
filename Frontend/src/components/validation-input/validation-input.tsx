@@ -36,7 +36,7 @@ export default function ValidationInput({
         onBlur={() => setTouched(true)}
         type={type}
       />
-      {!isValid && touched && <p className="error-msg">{validationmsg}</p>}
+      {!isValid && touched && <p className="error-msg">⚠️ {validationmsg}</p>}
     </div>
   );
 }
