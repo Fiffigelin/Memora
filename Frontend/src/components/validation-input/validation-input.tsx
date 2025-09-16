@@ -2,6 +2,7 @@ import { useState } from "react";
 import "./validation-input.scss";
 
 export type ValidationInputProps = {
+  id: string;
   label: string;
   validationmsg: string;
   isValid: boolean;
@@ -12,6 +13,7 @@ export type ValidationInputProps = {
 };
 
 export default function ValidationInput({
+  id,
   label,
   validationmsg,
   isValid,
@@ -26,6 +28,7 @@ export default function ValidationInput({
     <div className="input-container">
       <p className="title">{label}</p>
       <input
+        id={id}
         className={`input-field ${!isValid && touched ? "input-error" : ""}`}
         placeholder={placeholder}
         value={value}

@@ -1,0 +1,135 @@
+import { useCallback, useState } from "react";
+import ValidationInput from "../validation-input/validation-input";
+import { LoginRequestDto } from "../../api/client";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../pages/public/hooks/use-login";
+import { isEmail } from "../../utils/validations";
+
+import "./login-card.scss";
+import CommonButton from "../common-button/common-button";
+
+export default function LoginCard() {
+  const [flipped, setFlipped] = useState(false);
+
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState<LoginRequestDto>();
+  const [validLoginEmail, setLoginEmailValid] = useState<boolean>(true);
+
+  const { login } = useAuth();
+
+  const updateLoginUser = useCallback(
+    (property: keyof LoginRequestDto, value: string | undefined) => {
+      setUser((prevState) => {
+        return {
+          ...prevState,
+          [property]: value,
+        };
+      });
+    },
+    []
+  );
+
+  const updateLoginEmail = useCallback(
+    (value: string) => {
+      updateLoginUser("email", value);
+      setLoginEmailValid(isEmail(value));
+    },
+    [updateLoginUser]
+  );
+
+  const updatePassword = useCallback(
+    (value: string) => {
+      updateLoginUser("password", value);
+    },
+    [updateLoginUser]
+  );
+
+  async function validateLogin() {
+    if (user && validLoginEmail) {
+      try {
+        await login(user);
+        console.log("User inloggad");
+        // navigera till en annan sida
+        navigate("/dashboard");
+      } catch (err) {
+        console.error("något gick väldigt fel");
+      }
+    }
+  }
+
+  return (
+    <div className="card">
+      <div className={`card-inner ${flipped ? "is-flipped" : ""}`}>
+        <div className="card-face card-face-front">
+          <div className="card-wrapper">
+            <div className="card-text">
+              <h1>Login</h1>
+              <div className="login-text">
+                <p>Har inget konto?</p>
+                <p className="uri-reg" onClick={() => setFlipped(!flipped)}>
+                  Registrering
+                </p>
+              </div>
+            </div>
+
+            <div className="card-content">
+              <div className="card-input">
+                <ValidationInput
+                  id="email"
+                  label="Email"
+                  validationmsg={"Inkorrekt email address"}
+                  placeholder="Skriv din email"
+                  value={user?.email ?? ""}
+                  onChange={(value) => {
+                    updateLoginEmail(value);
+                  }}
+                  isValid={validLoginEmail}
+                />
+                <ValidationInput
+                  id="password"
+                  label="Lösenord"
+                  validationmsg={"Inkorrekt email address"}
+                  placeholder="Skriv ditt lösenord"
+                  value={user?.password ?? ""}
+                  onChange={(value) => {
+                    updatePassword(value);
+                  }}
+                  isValid={true}
+                  type={"password"}
+                />
+              </div>
+              <div className="card-btn">
+                <CommonButton
+                  onClick={validateLogin}
+                  title="LOGIN"
+                  variant="default"
+                  disabled={false}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="card-face card-face-back">
+          <div className="card-content">
+            <div className="card-header">
+              <h2 onClick={() => setFlipped(!flipped)}>Header</h2>
+            </div>
+            <div className="card-body">
+              <h3>Text</h3>
+              <p>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+                exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
+                irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                deserunt mollit anim id est laborum.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
