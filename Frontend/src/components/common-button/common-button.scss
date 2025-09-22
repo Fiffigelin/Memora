@@ -1,4 +1,5 @@
 .btn-container {
+  position: relative;
   width: 100%;
   padding: 16px;
   border-radius: 8px;
@@ -32,9 +33,41 @@
     opacity: 0.6;
     pointer-events: none;
   }
+
+  .btn-font {
+    font-weight: 700;
+    font-size: large;
+  }
+
+  &.loading {
+    .btn-font {
+      visibility: hidden;
+      opacity: 0;
+    }
+
+    &::after {
+      content: "";
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      margin: auto;
+      border: 4px solid transparent;
+      border-top-color: white;
+      border-radius: 50%;
+      animation: button-loading-spinner 1s ease infinite;
+    }
+  }
 }
 
-.btn-font {
-  font-weight: 700;
-  font-size: large;
+@keyframes button-loading-spinner {
+  from {
+    transform: rotate(0turn);
+  }
+  to {
+    transform: rotate(1turn);
+  }
 }

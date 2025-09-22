@@ -10,7 +10,7 @@ import CommonButton from "../common-button/common-button";
 
 export default function LoginCard() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
 
   const [flipped, setFlipped] = useState(false);
   const [user, setUser] = useState<LoginRequestDto>();
@@ -105,6 +105,7 @@ export default function LoginCard() {
                   title="LOGIN"
                   variant="default"
                   disabled={!isFormValid}
+                  loading={loading}
                 />
               </div>
             </div>

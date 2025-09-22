@@ -14,6 +14,7 @@ type AuthContextType = {
   user: AuthResponseDto | null;
   login: (credentials: LoginRequestDto) => Promise<void>;
   logout: () => void;
+  loading: boolean;
 };
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,22 +24,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return getFromCache<AuthResponseDto>("authToken", true);
   });
 
+  const [loading, setLoading] = useState(false);
+
   const login = useCallback(async (credentials: LoginRequestDto) => {
-    const client = new Client(new ConfigurationProvider(undefined, baseUrl));
+    setLoading(true);
 
-    const response = await getFromCacheOrUseCallback<AuthResponseDto>(
-      "authToken",
-      async () => {
-        const loginResponse = await client.login(credentials);
-        if (!loginResponse?.token) throw new Error("Login failed");
-        return loginResponse;
-      },
-      true,
-      true
-    );
+    try {
+      const client = new Client(new ConfigurationProvider(undefined, baseUrl));
 
-    setCacheIfPossible("authToken", response, true);
-    setUser(response);
+      const response = await getFromCacheOrUseCallback<AuthResponseDto>(
+        "authToken",
+        async () => {
+          const loginResponse = await client.login(credentials);
+          if (!loginResponse?.token) throw new Error("Login failed");
+          return loginResponse;
+        },
+        true,
+        true
+      );
+
+      setCacheIfPossible("authToken", response, true);
+      setUser(response);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const logout = useCallback(() => {
@@ -46,5 +55,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, login, logout, loading }}>{children}</AuthContext.Provider>
+  );
 }
