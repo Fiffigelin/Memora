@@ -52,7 +52,7 @@
     .public-wrapper {
       margin: 40px;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       .left {
         width: 50%;
         display: flex;
@@ -92,17 +92,30 @@
     .public-wrapper {
       margin: 40px;
       display: flex;
-      justify-content: space-between;
+      justify-content: center;
       align-items: center;
       .left {
         width: 50%;
         display: flex;
+        justify-content: center;
         padding: 0;
         .img-wrapper {
-          width: 100%;
+          position: relative;
+          align-content: center;
           .img {
             max-width: 90%;
             align-self: center;
+          }
+
+          .slackey-regular {
+            position: absolute;
+            top: 45%;
+            left: 45%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 0;
+            text-align: center;
           }
         }
       }
@@ -114,24 +127,43 @@
   }
 }
 
-// @media (min-width: 1921px) {
-//   .public-container {
-//     display: flex;
-//     height: 100%;
+@media (min-width: 1921px) {
+  .public-container {
+    align-content: center;
+    .public-wrapper {
+      margin: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .left {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        padding: 0;
+        .img-wrapper {
+          position: relative;
+          align-content: center;
+          .img {
+            max-width: 90%;
+            align-self: center;
+          }
 
-//     .split {
-//       width: 50%;
-//       display: flex;
-//       justify-content: center;
-//       align-items: center;
-//     }
+          .slackey-regular {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: bold;
+            margin: 0;
+            text-align: center;
+          }
+        }
+      }
 
-//     .left {
-//       .logo-placeholder {
-//       }
-//     }
-
-//     .right {
-//     }
-//   }
-// }
+      .right {
+        width: 50%;
+      }
+    }
+  }
+}
