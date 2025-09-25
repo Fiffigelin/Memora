@@ -1,17 +1,17 @@
 import { useCallback, useState } from "react";
-import ValidationInput from "../validation-input/validation-input";
 import { LoginRequestDto } from "../../api/client";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../pages/public/hooks/use-login";
 import { isEmail } from "../../utils/validations";
-
-import "./login-card.scss";
+import ValidationInput from "../validation-input/validation-input";
 import CommonButton from "../common-button/common-button";
 
-export default function LoginCard() {
-  const navigate = useNavigate();
-  const { login, loading } = useAuth();
+import "./login-card.scss";
 
+type LoginCardProps = {
+  onLogin: (user: LoginRequestDto) => Promise<void>;
+  loading: boolean;
+};
+
+export default function LoginCard({ onLogin, loading }: LoginCardProps) {
   const [flipped, setFlipped] = useState(false);
   const [user, setUser] = useState<LoginRequestDto>();
   const [validLoginEmail, setLoginEmailValid] = useState<boolean>(true);
@@ -45,18 +45,11 @@ export default function LoginCard() {
     [updateLoginUser]
   );
 
-  async function validateLogin() {
-    if (user && validLoginEmail) {
-      try {
-        await login(user);
-        console.log("User inloggad");
-        // navigera till en annan sida
-        navigate("/dashboard");
-      } catch (err) {
-        console.error("något gick väldigt fel");
-      }
+  const handleSubmit = () => {
+    if (user && isFormValid) {
+      onLogin(user);
     }
-  }
+  };
 
   return (
     <div className="card">
@@ -101,7 +94,7 @@ export default function LoginCard() {
               </div>
               <div className="card-btn">
                 <CommonButton
-                  onClick={validateLogin}
+                  onClick={handleSubmit}
                   title="LOGIN"
                   variant="default"
                   disabled={!isFormValid}
