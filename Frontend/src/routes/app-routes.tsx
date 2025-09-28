@@ -12,8 +12,10 @@ import PublicLayout from "../layouts/public/public-layout";
 import LoginPage from "../pages/public/login-page";
 import RegisterPage from "../pages/public/register-page";
 import ProtectedRoute from "./protected-route";
-import App from "../App";
 import { useAuth } from "../pages/public/hooks/use-login";
+import PrivateLayout from "../layouts/private/private-layout";
+import DashboardHome from "../pages/private/dashboard-home/dashboard-home-page";
+import VocabularyHome from "../pages/private/vocabulary-home/vocabulary-home-page";
 
 export default function AppRoutes() {
   const { user } = useAuth();
@@ -28,13 +30,15 @@ export default function AppRoutes() {
         </Route>
 
         <Route
-          path="/dashboard"
           element={
             <ProtectedRoute isAuthenticated={isAuthenticated}>
-              <App />
+              <PrivateLayout />
             </ProtectedRoute>
           }
-        />
+        >
+          <Route path="/dashboard" element={<DashboardHome />} />
+          <Route path="/vocabulary" element={<VocabularyHome />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
