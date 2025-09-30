@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FiLogOut, FiMenu } from "react-icons/fi";
 import { TiChevronRight } from "react-icons/ti";
 import { SidebarItem, SidebarItemProps } from "./sidebar-item";
@@ -11,7 +11,16 @@ export type NavItem = {
 };
 
 export default function Sidebar({ title, sidebarItems }: NavItem) {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState<boolean>(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setCollapsed((prev) => prev);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleToggle = () => {
     setCollapsed((prev) => !prev);
