@@ -12,13 +12,13 @@ import PublicLayout from "../layouts/public/public-layout";
 import LoginPage from "../pages/public/login-page";
 import RegisterPage from "../pages/public/register-page";
 import ProtectedRoute from "./protected-route";
-import { useAuth } from "../pages/public/hooks/use-login";
 import PrivateLayout from "../layouts/private/private-layout";
 import DashboardHome from "../pages/private/dashboard-home/dashboard-home-page";
 import VocabularyHome from "../pages/private/vocabulary-home/vocabulary-home-page";
+import { useAuthContext } from "../context/auth-context";
 
 export default function AppRoutes() {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const isAuthenticated = !!user;
 
   return (
