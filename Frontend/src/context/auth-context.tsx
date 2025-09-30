@@ -2,7 +2,7 @@ import { createContext, useContext } from "react";
 import { AuthResponseDto, LoginRequestDto } from "../api/client";
 
 export type AuthContextType = {
-  user: AuthResponseDto | null;
+  user: AuthResponseDto;
   login: (credentials: LoginRequestDto) => Promise<void>;
   logout: () => void;
   loading: boolean;
