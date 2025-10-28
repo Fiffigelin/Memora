@@ -6,8 +6,16 @@ import { TbVocabulary } from "react-icons/tb";
 // import { BiMessageDetail } from "react-icons/bi";
 
 import "./private-layout.scss";
+import { useAuthContext } from "../../context/auth-context";
 
 export default function PrivateLayout() {
+  const { user } = useAuthContext();
+  console.log(user);
+
+  if (!user?.user) {
+    return <p>Loading...</p>;
+  }
+
   const navItems: SidebarItemProps[] = [
     { label: "Dashboard", icon: <IoGridOutline />, to: "/dashboard" },
     { label: "Vocabularies", icon: <TbVocabulary />, to: "/vocabulary" },
@@ -16,7 +24,7 @@ export default function PrivateLayout() {
     <div className="private-container">
       <Sidebar title="" sidebarItems={navItems} />
       <section className="content">
-        <Outlet />
+        <Outlet context={{ user: user.user }} />
       </section>
     </div>
   );

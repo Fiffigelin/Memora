@@ -1,6 +1,9 @@
 :root {
   --primary: white;
   --secondary: blue;
+}
+
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
