@@ -1,34 +1,36 @@
 .icon-button {
   width: 100%;
-  height: 100%;
+  height: 60px;
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
-  border-radius: 6px;
-  color: black;
-  border: transparent;
+  border-radius: 4px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
-  transition: box-shadow 0.3s ease-in-out;
-  transition: color 0.3s ease-in-out;
-  transition: border 0.3s ease-in-out;
+  font-weight: 600;
 
   svg {
-    font-size: 28px;
+    font-size: 30px;
   }
 
-  &.add:hover {
-    box-shadow: 0 4px 6px rgba(10, 196, 10, 0.76);
-    border: 1px solid rgba(42, 173, 42, 0.4);
-    color: green;
+  &.edit {
+    svg {
+      color: #f7cc3f;
+    }
   }
-  &.edit:hover {
-    box-shadow: 0 4px 6px rgba(255, 165, 10, 0.76);
-    border: 1px solid rgba(255, 165, 10, 0.4);
-    color: orange;
+
+  &.delete {
+    svg {
+      color: #d32b2b;
+    }
   }
-  &.delete:hover {
-    box-shadow: 0 4px 6px rgba(255, 0, 0, 0.76);
-    border: 1px solid rgba(255, 0, 0, 0.4);
-    color: red;
+
+  &:hover {
+    cursor: pointer;
+    box-shadow: 0 3px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  &:active {
+    background-color: #f1f1f1;
+    transform: scale(0.97);
   }
 }

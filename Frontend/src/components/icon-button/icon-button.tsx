@@ -1,37 +1,46 @@
-import { RiAddCircleFill, RiAddCircleLine } from "react-icons/ri";
-import { MdModeEditOutline, MdOutlineEdit, MdDeleteOutline, MdDelete } from "react-icons/md";
+import { JSX } from "react";
+import { MdOutlineEdit, MdDeleteOutline } from "react-icons/md";
 
 import "./icon-button.scss";
-import { JSX, useState } from "react";
 
 export type IconButtonProps = {
-  type: "edit" | "delete" | "add";
+  type: "edit" | "delete";
+  onHandleClick: () => void;
 };
 
 export default function IconButton({ type }: IconButtonProps) {
-  const [isActive, setActive] = useState(false);
-
   const typeIcon = (type: string): JSX.Element | null => {
     switch (type) {
       case "edit":
-        return isActive ? <MdModeEditOutline /> : <MdOutlineEdit />;
+        return <MdOutlineEdit />;
       case "delete":
-        return isActive ? <MdDelete /> : <MdDeleteOutline />;
-      case "add":
-        return isActive ? <RiAddCircleFill /> : <RiAddCircleLine />;
+        return <MdDeleteOutline />;
       default:
         return null;
     }
   };
 
+  const typeText = (type: string): string => {
+    switch (type) {
+      case "edit":
+        return "Redigera";
+      case "delete":
+        return "Radera";
+      default:
+        return "";
+    }
+  };
+
   const handleClick = () => {
-    setActive((prev) => !prev);
+    console.log("DELETE");
+    // onHandleClick();
     // logik för att byta sida
   };
 
   return (
     <div className={`icon-button ${type}`} onClick={handleClick}>
       {typeIcon(type)}
+      <p>{typeText(type)}</p>
     </div>
   );
 }
