@@ -15,7 +15,7 @@ export default function Sidebar({ title, sidebarItems }: NavItem) {
 
   useEffect(() => {
     const handleResize = () => {
-      setCollapsed((prev) => prev);
+      setCollapsed(window.innerWidth < 768);
     };
 
     window.addEventListener("resize", handleResize);
@@ -44,14 +44,16 @@ export default function Sidebar({ title, sidebarItems }: NavItem) {
         </button>
       </div>
 
-      <ul className="nav-list">
-        {sidebarItems?.map(({ label, icon, to }, index) => (
-          <SidebarItem key={label || index} label={label} icon={icon} to={to} />
-        ))}
-      </ul>
+      <div className={`sidebar-content ${collapsed ? "collapsed" : ""}`}>
+        <ul className="nav-list">
+          {sidebarItems?.map(({ label, icon, to }, index) => (
+            <SidebarItem key={label || index} label={label} icon={icon} to={to} />
+          ))}
+        </ul>
 
-      <div className="logout" onClick={handleLogout}>
-        <SidebarItem key={"logout"} label={"Log out"} icon={<FiLogOut />} to={""} />
+        <div className="logout" onClick={handleLogout}>
+          <SidebarItem key={"logout"} label={"Log out"} icon={<FiLogOut />} to={""} />
+        </div>
       </div>
     </aside>
   );
