@@ -1,20 +1,49 @@
+import { useEffect, useRef, useState } from "react";
+import { useOutletContext } from "react-router-dom";
+import { UserProfileDto } from "../../../api/client";
 import CommonButton from "../../../components/common-button/common-button";
 import VocabCard from "../../../components/vocab-card/vocab-card";
 
 import "./vocabulary-home-page.scss";
-import { useOutletContext } from "react-router-dom";
-import { UserProfileDto } from "../../../api/client";
 
 type DashboardContext = { user: UserProfileDto };
+const LAZY_INCREMENT = 20;
 
 export default function VocabularyHome() {
   const { user } = useOutletContext<DashboardContext>();
+  const [visibleCount, setVisibleCount] = useState(LAZY_INCREMENT);
+  const [loading, setLoading] = useState(false);
 
-  const list1 = user?.vocabularyLists || [];
-  const list2 = user?.vocabularyLists || [];
-  const list3 = user?.vocabularyLists || [];
+  const testLists = Array(40)
+    .fill(null)
+    .flatMap(() => user?.vocabularyLists || []);
 
-  const testLists = [...list1, ...list2, ...list3];
+  const contentRef = useRef<HTMLDivElement>(null);
+  const lastItemRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!lastItemRef.current || visibleCount >= testLists.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && visibleCount < testLists.length) {
+          setLoading(true);
+          setTimeout(() => {
+            setVisibleCount((prev) => Math.min(prev + LAZY_INCREMENT, testLists.length));
+            setLoading(false);
+          }, 200);
+        }
+      },
+      {
+        root: contentRef.current,
+        threshold: 0.75,
+      }
+    );
+
+    observer.observe(lastItemRef.current);
+
+    return () => observer.disconnect();
+  }, [visibleCount, testLists.length]);
 
   return (
     <div className="vocabulary-home-container">
@@ -23,25 +52,30 @@ export default function VocabularyHome() {
         <CommonButton
           title="Skapa ny gloslista"
           variant="default"
-          onClick={() => {
-            console.log("Skapa ny lista");
-          }}
+          onClick={() => console.log("Skapa ny lista")}
         />
       </div>
-      <div className="vocabulary-content">
+
+      <div className="vocabulary-content" ref={contentRef}>
         <div className="vocabulary-list">
-          {/* {user?.vocabularyLists?.map((item) => ( */}
-          {testLists.map((item) => (
-            <VocabCard
-              key={item.id}
-              id={item.id!}
-              createdAt={item.createdAt}
-              language={item.language!}
-              title={item.title!}
-              amountOfWords={item.vocabularies ? item.vocabularies.length : 0}
-            />
-          ))}
+          {testLists.slice(0, visibleCount).map((item, index) => {
+            const isLastItem = index === visibleCount - 1;
+            return (
+              <div className="item-wrapper" key={index} ref={isLastItem ? lastItemRef : null}>
+                <VocabCard
+                  key={item.id}
+                  id={item.id!}
+                  createdAt={item.createdAt}
+                  language={item.language!}
+                  title={item.title!}
+                  amountOfWords={item.vocabularies ? item.vocabularies.length : 0}
+                />
+              </div>
+            );
+          })}
         </div>
+        {/* Ändra loading-indikatorn till något snyggare */}
+        {loading && <div className="loading-indicator">Laddar...</div>}
       </div>
     </div>
   );
