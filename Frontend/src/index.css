@@ -22,3 +22,28 @@ body {
   font-weight: 700;
   font-style: normal;
 }
+
+::-webkit-scrollbar {
+  width: 0.5vw;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #383838;
+  border-radius: 100vw;
+  margin-block: 0.5em;
+}
+
+::-webkit-scrollbar-track:hover {
+  background-color: #414040;
+  border-radius: 100vw;
+  margin-block: 0.5em;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(#412a58, #5c5980,#928dcc, #5c5980, #412a58);
+  border-radius: 100vw;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(#5a3f75, #847ec2,#bebaf5, #847ec2, #5a3f75);
+}
