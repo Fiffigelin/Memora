@@ -8,7 +8,7 @@ export type IconButtonProps = {
   onHandleClick: () => void;
 };
 
-export default function IconButton({ type }: IconButtonProps) {
+export default function IconButton({ type, onHandleClick }: IconButtonProps) {
   const typeIcon = (type: string): JSX.Element | null => {
     switch (type) {
       case "edit":
@@ -33,7 +33,7 @@ export default function IconButton({ type }: IconButtonProps) {
 
   const handleClick = () => {
     console.log("DELETE");
-    // onHandleClick();
+    onHandleClick();
     // logik för att byta sida
   };
 
