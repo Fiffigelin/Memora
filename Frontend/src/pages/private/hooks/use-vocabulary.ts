@@ -19,7 +19,7 @@ export function useVocabulary() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await client.getListByUser(); // anpassa till din faktiska endpoint
+      const response = await client.getListByUser();
       if (!response.success) throw new Error(response.message);
       setLists(response.data ?? []);
     } catch (err: unknown) {
