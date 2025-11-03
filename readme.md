@@ -5,6 +5,12 @@ So this is my attempt on something similar that will be free and available to th
 
 This is in its earliest development state. 
 
+Yes I know there's mixed use of english and swedish words. 
+
+Yes I know the design needs approvements.
+
+:)
+
 Login-page
 <img width="1919" height="918" alt="inlog" src="https://github.com/user-attachments/assets/57967741-8699-4fb4-b3f0-b8e8c7db3656" />
 
