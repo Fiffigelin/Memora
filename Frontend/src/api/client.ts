@@ -285,8 +285,8 @@ export class Client extends ClientBase {
   /**
    * @return OK
    */
-  getListByUser(): Promise<VocabularyListDtoIEnumerableApiResponse> {
-    let url_ = this.baseUrl + "/api/VocabularyLists/get-list-by-user";
+  getAllListsByUser(): Promise<VocabularyListDtoIEnumerableApiResponse> {
+    let url_ = this.baseUrl + "/api/VocabularyLists/get-all-lists-by-user";
     url_ = url_.replace(/[?&]$/, "");
 
     let options_: RequestInit = {
@@ -301,11 +301,11 @@ export class Client extends ClientBase {
         return this.http.fetch(url_, transformedOptions_);
       })
       .then((_response: Response) => {
-        return this.processGetListByUser(_response);
+        return this.processGetAllListsByUser(_response);
       });
   }
 
-  protected processGetListByUser(
+  protected processGetAllListsByUser(
     response: Response
   ): Promise<VocabularyListDtoIEnumerableApiResponse> {
     const status = response.status;
@@ -336,6 +336,60 @@ export class Client extends ClientBase {
       });
     }
     return Promise.resolve<VocabularyListDtoIEnumerableApiResponse>(null as any);
+  }
+
+  /**
+   * @return OK
+   */
+  getListByListId(listId: string): Promise<VocabularyListDtoApiResponse> {
+    let url_ = this.baseUrl + "/api/VocabularyLists/get-list-by-list-id/{listId}";
+    if (listId === undefined || listId === null)
+      throw new globalThis.Error("The parameter 'listId' must be defined.");
+    url_ = url_.replace("{listId}", encodeURIComponent("" + listId));
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_: RequestInit = {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    };
+
+    return this.transformOptions(options_)
+      .then((transformedOptions_) => {
+        return this.http.fetch(url_, transformedOptions_);
+      })
+      .then((_response: Response) => {
+        return this.processGetListByListId(_response);
+      });
+  }
+
+  protected processGetListByListId(response: Response): Promise<VocabularyListDtoApiResponse> {
+    const status = response.status;
+    let _headers: any = {};
+    if (response.headers && response.headers.forEach) {
+      response.headers.forEach((v: any, k: any) => (_headers[k] = v));
+    }
+    if (status === 200) {
+      return response.text().then((_responseText) => {
+        let result200: any = null;
+        result200 =
+          _responseText === ""
+            ? null
+            : (JSON.parse(_responseText, this.jsonParseReviver) as VocabularyListDtoApiResponse);
+        return result200;
+      });
+    } else if (status !== 200 && status !== 204) {
+      return response.text().then((_responseText) => {
+        return throwException(
+          "An unexpected server error occurred.",
+          status,
+          _responseText,
+          _headers
+        );
+      });
+    }
+    return Promise.resolve<VocabularyListDtoApiResponse>(null as any);
   }
 
   /**

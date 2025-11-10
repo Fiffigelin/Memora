@@ -30,7 +30,7 @@ public class VocabularyListsController : ControllerBase
     return Ok(list);
   }
 
-  [HttpGet("get-list-by-user")]
+  [HttpGet("get-all-lists-by-user")]
   public async Task<ActionResult<ApiResponse<IEnumerable<VocabularyListDto>>>> GetListsByUser()
   {
     var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -40,6 +40,19 @@ public class VocabularyListsController : ControllerBase
     var userId = Guid.Parse(userIdClaim.Value);
 
     var list = await _service.GetListsByUserAsync(userId);
+    return Ok(list);
+  }
+
+  [HttpGet("get-list-by-list-id/{listId}")]
+  public async Task<ActionResult<ApiResponse<VocabularyListDto>>> GetListById(Guid listId)
+  {
+    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+      return Unauthorized();
+
+    var userId = Guid.Parse(userIdClaim.Value);
+
+    var list = await _service.GetListsByIdAsync(userId, listId);
     return Ok(list);
   }
 

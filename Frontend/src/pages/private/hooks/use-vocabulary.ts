@@ -19,7 +19,7 @@ export function useVocabulary() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await client.getListByUser();
+      const response = await client.getAllListsByUser();
       if (!response.success) throw new Error(response.message);
       setLists(response.data ?? []);
     } catch (err: unknown) {
@@ -75,6 +75,27 @@ export function useVocabulary() {
   //   [refetch]
   // );
 
+  const fetchListById = useCallback(
+    async (listId: string) => {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response: VocabularyListDtoApiResponse = await client.getListByListId(listId);
+        if (!response.success) throw new Error(response.message);
+        return response.data;
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message ?? "Unknown error");
+        } else {
+          throw err;
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [client]
+  );
+
   const deleteList = useCallback(
     async (listId: string) => {
       setIsLoading(true);
@@ -102,6 +123,7 @@ export function useVocabulary() {
     isLoading,
     error,
     refetch,
+    fetchListById,
     deleteList,
   };
 }

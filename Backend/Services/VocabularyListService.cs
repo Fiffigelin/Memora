@@ -42,6 +42,30 @@ public class VocabularyListService
 		}
 	}
 
+	public async Task<ApiResponse<VocabularyListDto>> GetListsByIdAsync(Guid userId, Guid listId)
+	{
+		try
+		{
+			var lists = await _listRepo.GetListsByUser(userId);
+			var result = lists.Select(MapToDto).FirstOrDefault(list => list.Id == listId);
+
+			return new ApiResponse<VocabularyListDto>
+			{
+				Success = true,
+				Message = "Lists retrieved successfully",
+				Data = result
+			};
+		}
+		catch (Exception ex)
+		{
+			return new ApiResponse<VocabularyListDto>
+			{
+				Success = false,
+				Message = "Lists retrieved unsuccessfully: " + ex.Message,
+				Data = null
+			};
+		}
+	}
 	public async Task<ApiResponse<IEnumerable<VocabularyListDto>>> GetListsByUserAsync(Guid userId)
 	{
 		try
