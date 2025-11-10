@@ -6,10 +6,11 @@ import "./vocab-card.scss";
 
 export type VocabCardProps = {
   vocabList: VocabularyListDto;
+  onUpdate: (id: string) => void;
   onDelete: (id: string) => void;
 };
 
-export default function VocabCard({ vocabList, onDelete }: VocabCardProps) {
+export default function VocabCard({ vocabList, onUpdate, onDelete }: VocabCardProps) {
   const amountOfWords = vocabList.vocabularies?.length;
 
   return (
@@ -25,8 +26,8 @@ export default function VocabCard({ vocabList, onDelete }: VocabCardProps) {
         {amountOfWords && <h4>{`Antal ord i listan: ${amountOfWords}`}</h4>}
       </div>
       <div className="vocab-buttons">
-        <IconButton type={"edit"} onHandleClick={() => {}} />
-        <IconButton type={"delete"} onHandleClick={() => onDelete(vocabList.id || "")} />
+        <IconButton type={"edit"} onHandleClick={() => onUpdate(vocabList.id!)} />
+        <IconButton type={"delete"} onHandleClick={() => onDelete(vocabList.id!)} />
       </div>
     </div>
   );

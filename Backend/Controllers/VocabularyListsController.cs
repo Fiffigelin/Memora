@@ -17,7 +17,7 @@ public class VocabularyListsController : ControllerBase
     _service = service;
   }
 
-  [HttpPost]
+  [HttpPost("create-vocabularylist")]
   public async Task<IActionResult> Create([FromBody] CreateVocabularyListDto dto)
   {
     var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -30,7 +30,7 @@ public class VocabularyListsController : ControllerBase
     return Ok(list);
   }
 
-  [HttpGet("user")]
+  [HttpGet("get-all-lists-by-user")]
   public async Task<ActionResult<ApiResponse<IEnumerable<VocabularyListDto>>>> GetListsByUser()
   {
     var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -43,6 +43,19 @@ public class VocabularyListsController : ControllerBase
     return Ok(list);
   }
 
+  [HttpGet("get-list-by-list-id/{listId}")]
+  public async Task<ActionResult<ApiResponse<VocabularyListDto>>> GetListById(Guid listId)
+  {
+    var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+    if (userIdClaim == null)
+      return Unauthorized();
+
+    var userId = Guid.Parse(userIdClaim.Value);
+
+    var list = await _service.GetListsByIdAsync(userId, listId);
+    return Ok(list);
+  }
+
   [ApiExplorerSettings(IgnoreApi = true)]
   [AllowAnonymous]
   [HttpGet("all")]
@@ -52,7 +65,7 @@ public class VocabularyListsController : ControllerBase
     return Ok(lists);
   }
 
-  [HttpPut("update")]
+  [HttpPut("update-list-by-id")]
   public async Task<ActionResult<ApiResponse<VocabularyListDto>>> UpdateListById([FromBody] UpdateVocabularyListDto dto)
   {
     var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
@@ -65,7 +78,7 @@ public class VocabularyListsController : ControllerBase
     return Ok(list);
   }
 
-  [HttpDelete("delete/{listId}")]
+  [HttpDelete("delete-list-by-id/{listId}")]
   public async Task<ActionResult<ApiResponse<VocabularyListDto>>> DeleteListById(Guid listId)
   {
     var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
