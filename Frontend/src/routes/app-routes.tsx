@@ -14,8 +14,9 @@ import RegisterPage from "../pages/public/register-page";
 import ProtectedRoute from "./protected-route";
 import PrivateLayout from "../layouts/private/private-layout";
 import DashboardHome from "../pages/private/dashboard-home/dashboard-home-page";
-import VocabularyHome from "../pages/private/vocabulary-home/vocabulary-home-page";
+import VocabularyHome from "../pages/private/vocabulary/home/vocabulary-home-page";
 import { useAuthContext } from "../context/auth-context";
+import VocabularyEdit from "../pages/private/vocabulary/edit/vocabulary-edit-page";
 
 export default function AppRoutes() {
   const { user } = useAuthContext();
@@ -38,6 +39,8 @@ export default function AppRoutes() {
         >
           <Route path="/dashboard" element={<DashboardHome />} />
           <Route path="/vocabulary" element={<VocabularyHome />} />
+          <Route path="/vocabulary/new" element={<VocabularyEdit />} />
+          <Route path="/vocabulary/:id" element={<VocabularyEdit />} />
         </Route>
       </Routes>
     </BrowserRouter>
